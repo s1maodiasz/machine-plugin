@@ -1,0 +1,4 @@
+name: machine-plugin
+version: '1.0-SNAPSHOT'
+main: com.github.s1maodyasz.machine.MachinePlugin
+api-version: '1.21'
