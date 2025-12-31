@@ -1,4 +1,10 @@
 package com.github.s1maodyasz.machine.configuration;
 
-public class MachineConfigurationManager {
+import com.github.s1maodyasz.machine.configuration.util.KeyNormalizerUtil;
+
+public final class MachineConfigurationManager extends AbstractConfigurationManager<MachineConfiguration> {
+
+    public MachineConfigurationManager() {
+        super(MachineConfiguration::getKey, KeyNormalizerUtil::normalize);
+    }
 }

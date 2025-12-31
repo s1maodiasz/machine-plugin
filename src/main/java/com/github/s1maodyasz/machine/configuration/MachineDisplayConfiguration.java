@@ -2,21 +2,26 @@ package com.github.s1maodyasz.machine.configuration;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 public interface MachineDisplayConfiguration {
 
     @Getter
     @Builder(toBuilder = true)
     final class Block implements MachineDisplayConfiguration {
-        private Material material;
+        @Builder.Default
+        @NonNull
+        private Material material = Material.STONE;
     }
 
     @Getter
     @Builder(toBuilder = true)
     final class Model implements MachineDisplayConfiguration {
-        private Entity entity;
+        @NonNull
+        private EntityType type;
+        @NonNull
         private String model;
     }
 }

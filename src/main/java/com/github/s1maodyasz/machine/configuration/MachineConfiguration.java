@@ -23,7 +23,7 @@ public final class MachineConfiguration {
     private double price = 0;
 
     @NonNull
-    private ItemStack item;
+    private ItemConfiguration item;
 
     /**
      * The way the machine gonna be displayed for player (Can be a Block or a Model)
