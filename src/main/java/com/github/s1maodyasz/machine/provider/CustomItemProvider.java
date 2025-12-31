@@ -8,8 +8,4 @@ public interface CustomItemProvider {
 
     @Nullable ItemStack resolve(@NotNull String id);
 
-    @NotNull String name();
-
-    boolean available();
-
 }

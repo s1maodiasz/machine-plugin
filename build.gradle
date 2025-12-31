@@ -12,23 +12,24 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven {
+        url = "https://repo.nexomc.com/releases"
+    }
+    maven {
+        url = "https://repo.codemc.io/repository/maven-releases/"
+    }
 }
 
 dependencies {
     implementation('org.mongodb:mongodb-driver-sync:5.6.1')
     implementation('com.github.ben-manes.caffeine:caffeine:3.1.8')
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly('io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT')
     compileOnly('org.projectlombok:lombok:1.18.42')
+    compileOnly("com.nexomc:nexo:1.16.1")
+    compileOnly('io.github.toxicity188:bettermodel:1.15.1')
+    compileOnly('com.github.retrooper:packetevents-spigot:2.11.1')
+    compileOnly(files('libs/ItemsAdder.jar'))
     annotationProcessor('org.projectlombok:lombok:1.18.42')
-}
-
-tasks {
-    runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21")
-    }
 }
 
 def targetJavaVersion = 21
@@ -38,22 +39,5 @@ java {
     targetCompatibility = javaVersion
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release.set(targetJavaVersion)
-    }
-}
-
-processResources {
-    def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
     }
 }

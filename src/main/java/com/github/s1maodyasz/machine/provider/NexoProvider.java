@@ -1,15 +1,15 @@
 package com.github.s1maodyasz.machine.provider;
 
-import dev.lone.itemsadder.api.CustomStack;
+import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class ItemAdderProvider implements CustomItemProvider {
+public final class NexoProvider implements CustomItemProvider {
 
     @Override
     public @Nullable ItemStack resolve(@NotNull String id) {
-        final var stack = CustomStack.getInstance(id);
-        return stack == null ? null : stack.getItemStack();
+        final var builder = NexoItems.itemFromId(id);
+        return builder == null ? null : builder.build();
     }
 }
