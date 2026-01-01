@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.service.provider;
+package com.github.s1maodyasz.machine.provider;
 
 import kr.toxicity.model.api.BetterModel;
 import kr.toxicity.model.api.data.renderer.ModelRenderer;

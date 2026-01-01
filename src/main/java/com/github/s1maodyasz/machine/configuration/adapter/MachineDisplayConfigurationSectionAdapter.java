@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.service.configuration.adapter;
+package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.MachineDisplayConfiguration;
 import com.github.s1maodyasz.machine.util.EntitiesUtil;

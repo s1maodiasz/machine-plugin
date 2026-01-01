@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.service.provider;
+package com.github.s1maodyasz.machine.provider;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;

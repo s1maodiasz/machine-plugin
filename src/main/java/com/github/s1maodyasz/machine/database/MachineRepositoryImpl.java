@@ -20,11 +20,16 @@ public final class MachineRepositoryImpl implements MachineRepository {
 	private final @NotNull MongoCollection<Machine> collection;
 
 	@Override
-	public void save(@NotNull Machine machine) {
+	public void upsert(@NotNull Machine machine) {
 		collection.replaceOne(eq("_id", machine.getId()), machine, new ReplaceOptions().upsert(true));
 	}
 
-	@Override
+    @Override
+    public void bulkUpsert(@NotNull List<Machine> machines) {
+
+    }
+
+    @Override
 	public @NotNull Optional<Machine> findById(@NotNull UUID id) {
 		return Optional.ofNullable(collection.find(eq("_id", id)).first());
 	}

@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.service.configuration;
+package com.github.s1maodyasz.machine.configuration;
 
 import java.util.Collection;
 import java.util.Optional;

@@ -1,10 +1,10 @@
-package com.github.s1maodyasz.machine.service.configuration.adapter.decoder;
+package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.TextConfiguration;
 
-public final class TextConfigurationDecoder {
+public final class TextConfigurationValueAdapter {
 
-	public static TextConfiguration decode(String text) {
+	public static TextConfiguration adapt(String text) {
 		int index = 0;
 		final var len = text.length();
 		final var builder = TextConfiguration.builder().content(text);

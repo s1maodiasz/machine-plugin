@@ -41,6 +41,10 @@ public final class ItemBuilder {
 	private final ItemMeta meta =
 			Objects.requireNonNull(item.getItemMeta(), "ItemMeta null for " + item.getType());
 
+    public static @NotNull ItemBuilder of() {
+        return of(Material.AIR);
+    }
+
 	public static @NotNull ItemBuilder of(@NotNull Material material) {
 		return of(material, 1);
 	}

@@ -6,116 +6,78 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public final class MachineDatabaseImpl {
+public final class MachineDatabaseImpl implements MachineDatabase {
 
-	private final MongoClient client;
-	private final MachineRepository repository;
-	private final MachineCache cache;
-	private final ExecutorService executor;
+    private final MongoClient client;
+    private final MachineRepository repository;
+    private final MachineCache cache;
+    private final ExecutorService executor;
 
-	public MachineDatabaseImpl(Plugin plugin) {
-		var mongoConfiguration = plugin.getConfig().getConfigurationSection("mongo");
-		if (mongoConfiguration == null)
-			throw new IllegalArgumentException("Configuration is not defined.");
+    public MachineDatabaseImpl(@NotNull Plugin plugin) {
+        final ConfigurationSection mongo = plugin.getConfig().getConfigurationSection("mongo");
+        if (mongo == null) throw new IllegalArgumentException("Missing config section: mongo");
 
-		var url = mongoConfiguration.getString("url");
-		if (url == null)
-			throw new IllegalArgumentException("Mongo url in configuration is null `database.url`.");
+        final String url = mongo.getString("url");
+        if (url == null || url.isBlank()) throw new IllegalArgumentException("Missing config: mongo.url");
 
-		var settings =
-				MongoClientSettings.builder()
-						.applyConnectionString(new ConnectionString(url))
-						.uuidRepresentation(UuidRepresentation.STANDARD)
-						.applyToConnectionPoolSettings(
-								builder ->
-										builder
-												.minSize(2)
-												.maxSize(10)
-												.maxWaitTime(5, TimeUnit.SECONDS)
-												.maxConnectionIdleTime(1, TimeUnit.MINUTES))
-						.applyToSocketSettings(
-								builder ->
-										builder.connectTimeout(5, TimeUnit.SECONDS).readTimeout(5, TimeUnit.SECONDS))
-						.codecRegistry(
-								CodecRegistries.fromRegistries(
-										MongoClientSettings.getDefaultCodecRegistry(),
-										CodecRegistries.fromProviders(
-												PojoCodecProvider.builder().automatic(true).build())))
-						.build();
+        final MongoClientSettings settings =
+            MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(url))
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .applyToConnectionPoolSettings(b -> b
+                    .minSize(2)
+                    .maxSize(10)
+                    .maxWaitTime(5, TimeUnit.SECONDS)
+                    .maxConnectionIdleTime(1, TimeUnit.MINUTES))
+                .applyToSocketSettings(b -> b
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(5, TimeUnit.SECONDS))
+                .codecRegistry(CodecRegistries.fromRegistries(
+                    MongoClientSettings.getDefaultCodecRegistry(),
+                    CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
+                ))
+                .build();
 
-		this.client = MongoClients.create(settings);
+        this.client = MongoClients.create(settings);
 
-		var databaseName = mongoConfiguration.getString("databaseName");
-		var database = client.getDatabase(databaseName == null ? "machine_database" : databaseName);
+        final String databaseName = Optional.ofNullable(mongo.getString("databaseName"))
+            .filter(s -> !s.isBlank())
+            .orElse("machine_database");
 
-		var collectionName = mongoConfiguration.getString("collectionName");
-		var collection =
-				database.getCollection(collectionName == null ? "machine" : collectionName, Machine.class);
+        final String collectionName = Optional.ofNullable(mongo.getString("collectionName"))
+            .filter(s -> !s.isBlank())
+            .orElse("machine");
 
-		this.repository = new MachineRepositoryImpl(collection);
-		this.cache = new MachineCacheImpl(plugin);
+        final var collection = client.getDatabase(databaseName).getCollection(collectionName, Machine.class);
 
-		this.executor = Executors.newFixedThreadPool(4);
-	}
+        this.repository = new MachineRepositoryImpl(collection);
+        this.cache = new MachineCacheImpl(plugin);
 
-	public @NotNull Optional<Machine> findByLocationSync(@NotNull MachineLocation location) {
-		return findByLocationAsync(location).join();
-	}
+        final ThreadFactory tf = r -> {
+            final Thread t = new Thread(r, "machine-db");
+            t.setDaemon(true);
+            return t;
+        };
+        this.executor = Executors.newFixedThreadPool(4, tf);
+    }
 
-	public @NotNull CompletableFuture<Optional<Machine>> findByLocationAsync(
-			@NotNull MachineLocation location) {
-		final Optional<Machine> cached = cache.getByLocation(location);
-		if (cached.isPresent()) {
-			return CompletableFuture.completedFuture(cached);
-		}
+    @Override
+    public @NotNull Optional<Machine> findByLocationSync(@NotNull MachineLocation location) {
+        return findByLocationAsync(location).join();
+    }
 
-		return CompletableFuture.supplyAsync(() -> repository.findByLocation(location), executor)
-				.orTimeout(5, TimeUnit.SECONDS)
-				.exceptionally(e -> Optional.empty())
-				.thenApply(
-						machine -> {
-							machine.ifPresent(cache::put);
-							return machine;
-						});
-	}
-
-	public void saveSync(@NotNull Machine machine) {
-		saveAsync(machine).join();
-	}
-
-	public @NotNull CompletableFuture<Void> saveAsync(@NotNull Machine machine) {
-		cache.put(machine);
-
-		return CompletableFuture.runAsync(() -> repository.save(machine), executor)
-				.orTimeout(5, TimeUnit.SECONDS)
-				.exceptionally(e -> null);
-	}
-
-	public void removeSync(@NotNull Machine machine) {
-		removeAsync(machine).join();
-	}
-
-	public @NotNull CompletableFuture<Void> removeAsync(@NotNull Machine machine) {
-		cache.removeByLocation(machine.getLocation());
-
-		return CompletableFuture.runAsync(() -> repository.deleteById(machine.getId()), executor)
-				.orTimeout(5, TimeUnit.SECONDS)
-				.exceptionally(e -> null);
-	}
-
-	public void shutdown() {
-		client.close();
-		executor.shutdown();
-	}
-}
+    @Override

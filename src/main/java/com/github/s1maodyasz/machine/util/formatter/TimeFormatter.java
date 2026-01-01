@@ -22,20 +22,20 @@ public final class TimeFormatter {
     public static String format(long seconds) {
         if (seconds <= 0) return "0s";
 
-        long s = seconds;
-
         final var b = new StringBuilder(24);
-
         for (final var u : TimeUnit.values()) {
-            final long v = s / u.seconds;
+            final long v = seconds / u.seconds;
             if (v <= 0) continue;
 
-            s %= u.seconds;
+            seconds %= u.seconds;
 
-            if (b.isEmpty()) b.append(v).append(u.symbol);
+            final var empty = b.isEmpty();
+            if (empty)
+                b.append(v).append(u.symbol);
+
             else b.append(' ');
         }
 
-        return b.isEmpty() ? "0s" : b.toString();
+        return b.toString();
     }
 }

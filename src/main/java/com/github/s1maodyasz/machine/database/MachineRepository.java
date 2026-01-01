@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MachineRepository {
 
-	void save(@NotNull Machine machine);
+	void upsert(@NotNull Machine machine);
+
+    void upsertAll(@NotNull List<Machine> machines);
 
 	@NotNull
 	Optional<Machine> findById(@NotNull UUID id);

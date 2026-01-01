@@ -1,6 +1,5 @@
-package com.github.s1maodyasz.machine.service.provider.item;
+package com.github.s1maodyasz.machine.provider;
 
-import com.github.s1maodyasz.machine.service.provider.ItemProvider;
 import com.github.s1maodyasz.machine.util.ItemBuilder;
 import com.nexomc.nexo.api.NexoItems;
 import org.bukkit.inventory.ItemStack;
