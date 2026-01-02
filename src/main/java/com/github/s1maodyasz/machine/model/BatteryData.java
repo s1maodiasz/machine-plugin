@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(fluent = true)
 public final class BatteryData {
 
-  @NotNull private String key;
+    @NotNull
+    private String key;
 
-  private double stack;
+    private double stack;
 }

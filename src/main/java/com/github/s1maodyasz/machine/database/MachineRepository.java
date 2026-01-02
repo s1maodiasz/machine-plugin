@@ -20,46 +20,44 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public final class MachineRepository {
 
-  private final @NotNull MongoCollection<Machine> collection;
+    private final @NotNull MongoCollection<Machine> collection;
 
-  public void upsert(@NotNull Machine machine) {
-    collection.replaceOne(eq("_id", machine.id()), machine, new ReplaceOptions().upsert(true));
-  }
-
-  public void upsertAll(@NotNull List<Machine> machines) {
-    if (machines.isEmpty()) return;
-
-    final var upsertOptions = new ReplaceOptions().upsert(true);
-    final List<WriteModel<Machine>> ops = new ArrayList<>(machines.size());
-    for (var machine : machines) {
-      ops.add(new ReplaceOneModel<>(eq("_id", machine.id()), machine, upsertOptions));
+    public void upsert(@NotNull Machine machine) {
+        collection.replaceOne(eq("_id", machine.id()), machine, new ReplaceOptions().upsert(true));
     }
 
-    collection.bulkWrite(ops, new BulkWriteOptions().ordered(false));
-  }
+    public void upsertAll(@NotNull List<Machine> machines) {
+        if (machines.isEmpty()) return;
 
-  public @NotNull Optional<Machine> findById(@NotNull UUID id) {
-    return Optional.ofNullable(collection.find(eq("_id", id)).first());
-  }
+        final var upsertOptions = new ReplaceOptions().upsert(true);
+        final List<WriteModel<Machine>> ops = new ArrayList<>(machines.size());
+        for (var machine : machines) {
+            ops.add(new ReplaceOneModel<>(eq("_id", machine.id()), machine, upsertOptions));
+        }
 
-  public @NotNull List<Machine> findByOwnerId(@NotNull UUID ownerId) {
-    return collection.find(eq("ownerId", ownerId)).into(new ArrayList<>());
-  }
+        collection.bulkWrite(ops, new BulkWriteOptions().ordered(false));
+    }
 
-  public @NotNull Optional<Machine> findByLocation(@NotNull MachineLocation location) {
-    return Optional.ofNullable(
-        collection
-            .find(
-                and(
-                    eq("worldId", location.worldId()),
-                    eq("x", location.x()),
-                    eq("y", location.y()),
-                    eq("z", location.z())))
-            .first());
-  }
+    public @NotNull Optional<Machine> findById(@NotNull UUID id) {
+        return Optional.ofNullable(collection.find(eq("_id", id)).first());
+    }
 
-  public void deleteById(@NotNull UUID id) {
-    final DeleteResult result = collection.deleteOne(eq("_id", id));
-    result.getDeletedCount();
-  }
+    public @NotNull List<Machine> findByOwnerId(@NotNull UUID ownerId) {
+        return collection.find(eq("ownerId", ownerId)).into(new ArrayList<>());
+    }
+
+    public @NotNull Optional<Machine> findByLocation(@NotNull MachineLocation location) {
+        return Optional.ofNullable(collection
+                .find(and(
+                        eq("worldId", location.worldId()),
+                        eq("x", location.x()),
+                        eq("y", location.y()),
+                        eq("z", location.z())))
+                .first());
+    }
+
+    public void deleteById(@NotNull UUID id) {
+        final DeleteResult result = collection.deleteOne(eq("_id", id));
+        result.getDeletedCount();
+    }
 }

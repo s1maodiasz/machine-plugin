@@ -8,11 +8,11 @@ import lombok.experimental.Accessors;
 @Getter
 @Builder(access = AccessLevel.PUBLIC)
 @Accessors(fluent = true)
-public final class MachineSource {
+public final class MachineRuntime {
 
-  /** Time mark just to represent user collect drop or start machine */
-  private long mark;
+    /** Time mark just to represent user collect drop or start machine */
+    private long mark;
 
-  /** End markup to represent the time */
-  private long end;
+    /** End markup to represent the time */
+    private long end;
 }

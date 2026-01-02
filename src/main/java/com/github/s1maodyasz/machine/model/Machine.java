@@ -1,6 +1,8 @@
 package com.github.s1maodyasz.machine.model;
 
 import java.util.*;
+
+import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -14,35 +16,38 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @Accessors(fluent = true)
 public final class Machine {
 
-  @BsonId @Builder.Default @NonNull private final UUID id = UUID.randomUUID();
+    @BsonId
+    @Builder.Default
+    @NonNull
+    private final UUID id = UUID.randomUUID();
 
-  @NonNull
-  @BsonProperty("key")
-  private final UUID key;
+    @NonNull
+    @BsonProperty("key")
+    private final UUID key;
 
-  @NonNull
-  @BsonProperty("location")
-  private MachineLocation location;
+    @NonNull
+    @BsonProperty("location")
+    private MachineLocation location;
 
-  @Singular
-  @NonNull
-  @BsonProperty("collaborators")
-  private final Set<MachineCollaborator> collaborators = new HashSet<>();
+    @Singular
+    @NonNull
+    @BsonProperty("collaborators")
+    private final Set<MachineCollaborator> collaborators = new HashSet<>();
 
-  @Singular
-  @NonNull
-  @BsonProperty("upgrades")
-  private final Map<MachineUpgradeEnum, Integer> upgrades = new EnumMap<>(MachineUpgradeEnum.class);
+    @Singular
+    @NonNull
+    @BsonProperty("upgrades")
+    private final Map<MachineUpgradeEnum, Integer> upgrades = new EnumMap<>(MachineUpgradeEnum.class);
 
-  @Builder.Default
-  @BsonProperty("energy")
-  private double energy = 0;
+    @BsonProperty("runtime")
+    @NonNull
+    private final MachineRuntime runtime;
 
-  @Builder.Default
-  @BsonProperty("stack")
-  private double stack = 1;
+    @Builder.Default
+    @BsonProperty("stack")
+    private double stack = 1;
 
-  @Builder.Default
-  @BsonProperty("drops")
-  private double drops = 0;
+    @Builder.Default
+    @BsonProperty("drops")
+    private double drops = 0;
 }

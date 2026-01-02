@@ -6,6 +6,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface CustomItemProvider {
 
-  @NotNull
-  ItemStack resolve(@NotNull String value);
+    @NotNull
+    ItemStack resolve(@NotNull String value);
 }

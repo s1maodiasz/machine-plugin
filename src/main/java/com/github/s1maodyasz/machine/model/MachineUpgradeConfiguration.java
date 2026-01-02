@@ -9,12 +9,12 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class MachineUpgradeConfiguration {
 
-  private double base;
-  private double modifier;
-  private int max;
+    private double base;
+    private double modifier;
+    private int max;
 
-  public double valueAt(int level) {
-    final int l = Math.min(level, max);
-    return base + (modifier * l);
-  }
+    public double valueAt(int level) {
+        final int l = Math.min(level, max);
+        return base + (modifier * l);
+    }
 }

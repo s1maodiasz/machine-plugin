@@ -10,9 +10,11 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class BatteryConfiguration {
 
-  @NonNull private String key;
+    @NonNull
+    private String key;
 
-  @NonNull private ItemConfiguration item;
+    @NonNull
+    private ItemConfiguration item;
 
-  private double amount;
+    private double amount;
 }

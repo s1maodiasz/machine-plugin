@@ -6,5 +6,5 @@ import org.bukkit.entity.Entity;
 @FunctionalInterface
 public interface CustomEntityProvider {
 
-  Entity spawn(Location location, String model);
+    Entity spawn(Location location, String model);
 }

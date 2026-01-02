@@ -9,19 +9,23 @@ import org.bukkit.entity.EntityType;
 
 public interface MachineDisplayConfiguration {
 
-  @Getter
-  @Builder(toBuilder = true)
-  @Accessors(fluent = true)
-  final class Block implements MachineDisplayConfiguration {
-    @Builder.Default @NonNull private Material material = Material.STONE;
-  }
+    @Getter
+    @Builder(toBuilder = true)
+    @Accessors(fluent = true)
+    final class Block implements MachineDisplayConfiguration {
+        @Builder.Default
+        @NonNull
+        private Material material = Material.STONE;
+    }
 
-  @Getter
-  @Builder(toBuilder = true)
-  @Accessors(fluent = true)
-  final class Model implements MachineDisplayConfiguration {
-    @NonNull private EntityType type;
+    @Getter
+    @Builder(toBuilder = true)
+    @Accessors(fluent = true)
+    final class Model implements MachineDisplayConfiguration {
+        @NonNull
+        private EntityType type;
 
-    @NonNull private String model;
-  }
+        @NonNull
+        private String model;
+    }
 }

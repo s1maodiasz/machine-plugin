@@ -1,6 +1,8 @@
 package com.github.s1maodyasz.machine.model;
 
 import java.util.Map;
+
+import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -12,17 +14,24 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class MachineConfiguration {
 
-  @NonNull private String key;
+    @NonNull
+    private String key;
 
-  @NonNull private String name;
+    @NonNull
+    private String name;
 
-  @Builder.Default private double price = 0;
+    @Builder.Default
+    private double price = 0;
 
-  @NonNull private ItemConfiguration item;
+    @NonNull
+    private ItemConfiguration item;
 
-  /** The way the machine gonna be displayed for player (Can be a Block or a Model) */
-  @NonNull private MachineDisplayConfiguration display;
+    /** The way the machine gonna be displayed for player (Can be a Block or a Model) */
+    @NonNull
+    private MachineDisplayConfiguration display;
 
-  /** Modifier for individual level */
-  @NonNull @Singular private Map<MachineUpgradeEnum, MachineUpgradeConfiguration> upgrades;
+    /** Modifier for individual level */
+    @NonNull
+    @Singular
+    private Map<MachineUpgradeEnum, MachineUpgradeConfiguration> upgrades;
 }

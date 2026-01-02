@@ -8,9 +8,9 @@ import org.jspecify.annotations.NonNull;
 
 public final class NexoProvider implements CustomItemProvider {
 
-  @Override
-  public @NonNull ItemStack resolve(@NotNull String value) {
-    final var builder = NexoItems.itemFromId(value);
-    return builder == null ? ItemBuilder.NONE : builder.build();
-  }
+    @Override
+    public @NonNull ItemStack resolve(@NotNull String value) {
+        final var builder = NexoItems.itemFromId(value);
+        return builder == null ? ItemBuilder.NONE : builder.build();
+    }
 }

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NormalizerUtil {
 
-  public static String normalize(String key) {
-    return key.trim().toLowerCase();
-  }
+    public static String normalize(String key) {
+        return key.trim().toLowerCase();
+    }
 }

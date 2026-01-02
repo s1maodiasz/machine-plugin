@@ -6,20 +6,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MachinePlugin extends JavaPlugin {
 
-  @Getter private static MachinePlugin instance;
+    @Getter
+    private static MachinePlugin instance;
 
-  private MachineDatabase database;
+    private MachineDatabase database;
 
-  @Override
-  public void onLoad() {
-    instance = this;
-  }
+    @Override
+    public void onLoad() {
+        instance = this;
+    }
 
-  @Override
-  public void onEnable() {}
+    @Override
+    public void onEnable() {
 
-  @Override
-  public void onDisable() {
-    database.close();
-  }
+    }
+
+    @Override
+    public void onDisable() {
+        database.close();
+    }
 }

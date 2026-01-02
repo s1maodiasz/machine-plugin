@@ -7,16 +7,21 @@ import org.jetbrains.annotations.NotNull;
 @Builder
 public final class GiveOptions {
 
-  public enum Purpose {
-    MACHINE,
-    BATTERY
-  }
+    public enum Purpose {
+        MACHINE,
+        BATTERY
+    }
 
-  @NotNull Player player;
+    @NotNull
+    Player player;
 
-  @NotNull String key;
+    @NotNull
+    String key;
 
-  @NotNull Purpose purpose;
+    @NotNull
+    Purpose purpose;
 
-  @Builder.Default double amount = 1;
+    @Builder.Default
+    double amount = 1;
+
 }

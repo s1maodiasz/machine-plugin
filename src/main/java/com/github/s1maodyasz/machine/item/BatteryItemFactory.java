@@ -12,45 +12,45 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BatteryItemFactory extends ItemFactory<BatteryConfiguration, BatteryData> {
 
-  public BatteryItemFactory(
-      @NotNull NamespacedKey key, @NotNull CustomItemProvider provider, @NotNull Gson gson) {
-    super(key, provider, gson);
-  }
-
-  @Override
-  public @NotNull ItemStack create(@NotNull BatteryConfiguration cfg, @NotNull BatteryData data) {
-    final var builder = ItemBuilder.of();
-    final var item = cfg.item();
-
-    final var type = item.value();
-    final var model = item.model();
-
-    if (model == null || model.isBlank()) {
-      builder.type(type);
-    } else {
-      builder.stack(provider.resolve(model));
+    public BatteryItemFactory(@NotNull NamespacedKey key, @NotNull CustomItemProvider provider, @NotNull Gson gson) {
+        super(key, provider, gson);
     }
 
-    final var name = apply(item.name(), cfg, data);
-    builder.name(name);
+    @Override
+    public @NotNull ItemStack create(@NotNull BatteryConfiguration cfg, @NotNull BatteryData data) {
+        final var builder = ItemBuilder.of();
+        final var item = cfg.item();
 
-    final var lore = item.lore().stream().map(line -> apply(line, cfg, data)).toList();
-    builder.lore(lore);
+        final var type = item.value();
+        final var model = item.model();
 
-    builder.unbreakable(item.unbreakable());
+        if (model == null || model.isBlank()) {
+            builder.type(type);
+        } else {
+            builder.stack(provider.resolve(model));
+        }
 
-    final var payload = gson.toJson(data);
-    builder.pdc().string(key, payload);
+        final var name = apply(item.name(), cfg, data);
+        builder.name(name);
 
-    return builder.build();
-  }
+        final var lore =
+                item.lore().stream().map(line -> apply(line, cfg, data)).toList();
+        builder.lore(lore);
 
-  @Override
-  String resolve(String placeholder, BatteryConfiguration configuration, BatteryData data) {
-    return switch (placeholder) {
-      case "battery_stack" -> NumberFormatter.format(data.stack());
-      case "battery_total" -> NumberFormatter.format(configuration.amount() * data.stack());
-      default -> "{" + placeholder + "}";
-    };
-  }
+        builder.unbreakable(item.unbreakable());
+
+        final var payload = gson.toJson(data);
+        builder.pdc().string(key, payload);
+
+        return builder.build();
+    }
+
+    @Override
+    String resolve(String placeholder, BatteryConfiguration configuration, BatteryData data) {
+        return switch (placeholder) {
+            case "battery_stack" -> NumberFormatter.format(data.stack());
+            case "battery_total" -> NumberFormatter.format(configuration.amount() * data.stack());
+            default -> "{" + placeholder + "}";
+        };
+    }
 }
