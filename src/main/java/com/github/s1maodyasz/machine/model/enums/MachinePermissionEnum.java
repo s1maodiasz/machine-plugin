@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.model.types;
+package com.github.s1maodyasz.machine.model.type;
 
 public enum MachinePermissionEnum {
     ADD_STACK,
