@@ -43,11 +43,7 @@ java {
 
 spotless {
     java {
-        target("src/**/*.java")
-
-        indentWithTabs(1)
-
-        importOrder()
+        palantirJavaFormat()
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

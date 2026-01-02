@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class TextConfiguration {
 
-	@NonNull private String content;
+  @NonNull private String content;
 
-	@Singular @NonNull private List<String> placeholders;
+  @Singular @NonNull private List<String> placeholders;
 }

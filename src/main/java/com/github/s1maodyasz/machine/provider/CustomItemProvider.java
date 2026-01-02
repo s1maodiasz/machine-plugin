@@ -3,8 +3,9 @@ package com.github.s1maodyasz.machine.provider;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public interface ItemProvider {
+@FunctionalInterface
+public interface CustomItemProvider {
 
-	@NotNull
-	ItemStack resolve(@NotNull String value);
+  @NotNull
+  ItemStack resolve(@NotNull String value);
 }

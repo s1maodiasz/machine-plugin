@@ -12,16 +12,16 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 @Accessors(fluent = true)
 public final class MachineLocation {
 
-	@BsonProperty("worldId")
-	@NonNull
-	private UUID worldId;
+  @BsonProperty("worldId")
+  @NonNull
+  private UUID worldId;
 
-	@BsonProperty("x")
-	private long x;
+  @BsonProperty("x")
+  private long x;
 
-	@BsonProperty("y")
-	private long y;
+  @BsonProperty("y")
+  private long y;
 
-	@BsonProperty("z")
-	private long z;
+  @BsonProperty("z")
+  private long z;
 }

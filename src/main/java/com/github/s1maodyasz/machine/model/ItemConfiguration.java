@@ -12,13 +12,13 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class ItemConfiguration {
 
-	@NonNull private String type;
+  @NonNull private String value;
 
-	@NonNull private String value;
+  private String model;
 
-	@NonNull private TextConfiguration name;
+  @NonNull private TextConfiguration name;
 
-	@Builder.Default private List<TextConfiguration> lore = Collections.emptyList();
+  @Builder.Default private List<TextConfiguration> lore = Collections.emptyList();
 
-	@Builder.Default private boolean unbreakable = false;
+  @Builder.Default private boolean unbreakable = false;
 }

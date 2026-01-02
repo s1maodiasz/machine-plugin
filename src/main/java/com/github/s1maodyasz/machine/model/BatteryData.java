@@ -2,17 +2,15 @@ package com.github.s1maodyasz.machine.model;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
-public final class BatteryConfiguration {
+public final class BatteryData {
 
-  @NonNull private String key;
+  @NotNull private String key;
 
-  @NonNull private ItemConfiguration item;
-
-  private double amount;
+  private double stack;
 }
