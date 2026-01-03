@@ -42,10 +42,6 @@ public final class MachineRepository {
         return Optional.ofNullable(collection.find(eq("_id", id)).first());
     }
 
-    public @NotNull List<Machine> findByOwnerId(@NotNull UUID ownerId) {
-        return collection.find(eq("ownerId", ownerId)).into(new ArrayList<>());
-    }
-
     public @NotNull Optional<Machine> findByLocation(@NotNull MachineLocation location) {
         return Optional.ofNullable(collection
                 .find(and(

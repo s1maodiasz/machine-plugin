@@ -1,5 +1,7 @@
 package com.github.s1maodyasz.machine.util;
 
+import java.util.Optional;
+import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.NamespacedKey;
@@ -7,9 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Optional;
-import java.util.function.Function;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemDataUtil {
@@ -37,9 +36,9 @@ public final class ItemDataUtil {
 
     public <T, Z, Q> Optional<Q> get(ItemStack item, PersistentDataType<T, Z> type, Function<Z, Q> adapter) {
         return Optional.ofNullable(getMeta(item))
-            .map(ItemMeta::getPersistentDataContainer)
-            .map(pdc -> pdc.get(key, type))
-            .map(adapter);
+                .map(ItemMeta::getPersistentDataContainer)
+                .map(pdc -> pdc.get(key, type))
+                .map(adapter);
     }
 
     public <T, Z> Z getOr(ItemStack item, PersistentDataType<T, Z> type, Z def) {

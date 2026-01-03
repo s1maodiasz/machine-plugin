@@ -10,6 +10,8 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public final class MachineRuntime {
 
+    public static final MachineRuntime NOT_RUNNING = new MachineRuntime(0, 0);
+
     /** Time mark just to represent user collect drop or start machine */
     private long mark;
 

@@ -7,7 +7,9 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.*;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -50,12 +52,10 @@ public final class MachineDatabase {
 
         final String databaseName = mongo.getString("databaseName", "machine_database");
         final String collectionName = mongo.getString("collectionName", "machine");
-
         final var collection = client.getDatabase(databaseName).getCollection(collectionName, Machine.class);
 
         this.repository = new MachineRepository(collection);
         this.cache = new MachineCache(plugin);
-
         this.executor = Executors.newFixedThreadPool(4);
 
         final long timeoutMillis = plugin.getConfig().getLong("machine.database.operationTimeoutMillis", 1500L);
@@ -120,6 +120,15 @@ public final class MachineDatabase {
                         },
                         executor))
                 .exceptionally(ex -> null);
+    }
+
+    public @NotNull List<Machine> nearbySync(@NotNull MachineLocation center, int radius) {
+        return cache.nearby(center, radius);
+    }
+
+    public @NotNull CompletableFuture<List<Machine>> nearbyAsync(@NotNull MachineLocation center, int radius) {
+        return withTimeout(CompletableFuture.supplyAsync(() -> nearbySync(center, radius), executor))
+                .exceptionally(ex -> List.of());
     }
 
     public void close() {

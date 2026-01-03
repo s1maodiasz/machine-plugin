@@ -1,16 +1,17 @@
 package com.github.s1maodyasz.machine.model;
 
+import com.github.s1maodyasz.machine.model.enums.MachinePermissionEnum;
 import java.util.List;
 import java.util.UUID;
-
-import com.github.s1maodyasz.machine.model.types.MachinePermissionEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
+@Accessors(fluent = true)
 public final class MachineCollaborator {
 
     @NonNull
@@ -19,7 +20,7 @@ public final class MachineCollaborator {
 
     @NonNull
     @BsonProperty("ownerId")
-    private UUID ownerId;
+    private UUID playerId;
 
     @NonNull
     @BsonProperty("permissions")

@@ -1,14 +1,13 @@
-package com.github.s1maodyasz.machine.message;
+package com.github.s1maodyasz.machine.util;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MessageBuilder {
@@ -17,10 +16,10 @@ public final class MessageBuilder {
     private static final Pattern PH = Pattern.compile("\\{([a-zA-Z0-9_.-]+)}");
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.builder()
-        .character('&')
-        .hexColors()
-        .useUnusualXRepeatedCharacterHexFormat()
-        .build();
+            .character('&')
+            .hexColors()
+            .useUnusualXRepeatedCharacterHexFormat()
+            .build();
 
     private final List<String> lines;
     private final Map<String, Object> placeholders = new HashMap<>();

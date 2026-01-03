@@ -14,11 +14,13 @@ repositories {
     }
     maven { url = "https://repo.nexomc.com/releases" }
     maven { url = "https://repo.codemc.io/repository/maven-releases/" }
+    maven { url 'https://repo.aikar.co/content/groups/aikar/' }
 }
 
 dependencies {
     implementation('org.mongodb:mongodb-driver-sync:5.6.1')
     implementation('com.github.ben-manes.caffeine:caffeine:3.1.8')
+    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
 
     compileOnly('io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT')
 
@@ -27,8 +29,6 @@ dependencies {
 
     compileOnly("com.nexomc:nexo:1.16.1")
     compileOnly('io.github.toxicity188:bettermodel:1.15.1')
-    compileOnly('com.github.retrooper:packetevents-spigot:2.11.1')
-    compileOnly(files('libs/ItemsAdder.jar'))
 }
 
 def targetJavaVersion = 21

@@ -9,6 +9,10 @@ import org.bukkit.entity.EntityType;
 
 public interface MachineDisplayConfiguration {
 
+    boolean isBlock();
+
+    boolean isModel();
+
     @Getter
     @Builder(toBuilder = true)
     @Accessors(fluent = true)
@@ -16,6 +20,16 @@ public interface MachineDisplayConfiguration {
         @Builder.Default
         @NonNull
         private Material material = Material.STONE;
+
+        @Override
+        public boolean isBlock() {
+            return true;
+        }
+
+        @Override
+        public boolean isModel() {
+            return false;
+        }
     }
 
     @Getter
@@ -27,5 +41,15 @@ public interface MachineDisplayConfiguration {
 
         @NonNull
         private String model;
+
+        @Override
+        public boolean isBlock() {
+            return false;
+        }
+
+        @Override
+        public boolean isModel() {
+            return true;
+        }
     }
 }

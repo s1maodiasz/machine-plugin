@@ -1,8 +1,7 @@
 package com.github.s1maodyasz.machine.model;
 
+import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
 import java.util.Map;
-
-import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -22,6 +21,8 @@ public final class MachineConfiguration {
 
     @Builder.Default
     private double price = 0;
+
+    private double drop;
 
     @NonNull
     private ItemConfiguration item;

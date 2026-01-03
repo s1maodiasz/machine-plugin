@@ -17,11 +17,11 @@ public final class MachineLocation {
     private UUID worldId;
 
     @BsonProperty("x")
-    private long x;
+    private int x;
 
     @BsonProperty("y")
-    private long y;
+    private int y;
 
     @BsonProperty("z")
-    private long z;
+    private int z;
 }

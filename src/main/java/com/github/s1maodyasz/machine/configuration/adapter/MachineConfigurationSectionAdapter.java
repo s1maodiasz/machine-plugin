@@ -2,7 +2,7 @@ package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.model.MachineUpgradeConfiguration;
-import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
+import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +21,7 @@ public final class MachineConfigurationSectionAdapter {
         Objects.requireNonNull(name, "Machine name cannot be null. (key=" + key + ")");
 
         final var price = section.getDouble("price", 0D);
+        final var drop = section.getDouble("drop", 0D);
 
         final var itemSection = section.getConfigurationSection("item");
         Objects.requireNonNull(itemSection, "Machine item section cannot be null. (key=" + key + ")");
@@ -48,6 +49,7 @@ public final class MachineConfigurationSectionAdapter {
                 .key(key)
                 .name(name)
                 .price(price)
+                .drop(drop)
                 .item(item)
                 .display(display)
                 .upgrades(upgrades)

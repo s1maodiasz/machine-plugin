@@ -17,9 +17,7 @@ public final class MachinePlugin extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
-
-    }
+    public void onEnable() {}
 
     @Override
     public void onDisable() {

@@ -1,15 +1,14 @@
 package com.github.s1maodyasz.machine.model;
 
+import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
 import java.util.*;
-
-import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Singular;
 import lombok.experimental.Accessors;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Builder(toBuilder = true)
@@ -23,25 +22,30 @@ public final class Machine {
 
     @NonNull
     @BsonProperty("key")
-    private final UUID key;
+    private final String key;
+
+    @NotNull
+    @BsonProperty("ownerId")
+    private UUID ownerId;
 
     @NonNull
     @BsonProperty("location")
     private MachineLocation location;
 
-    @Singular
     @NonNull
     @BsonProperty("collaborators")
+    @Builder.Default
     private final Set<MachineCollaborator> collaborators = new HashSet<>();
 
-    @Singular
     @NonNull
     @BsonProperty("upgrades")
+    @Builder.Default
     private final Map<MachineUpgradeEnum, Integer> upgrades = new EnumMap<>(MachineUpgradeEnum.class);
 
     @BsonProperty("runtime")
     @NonNull
-    private final MachineRuntime runtime;
+    @Builder.Default
+    private final MachineRuntime runtime = MachineRuntime.NOT_RUNNING;
 
     @Builder.Default
     @BsonProperty("stack")

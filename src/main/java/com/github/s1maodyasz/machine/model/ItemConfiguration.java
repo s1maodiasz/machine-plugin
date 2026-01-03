@@ -13,15 +13,17 @@ import lombok.experimental.Accessors;
 public final class ItemConfiguration {
 
     @NonNull
-    private String value;
+    private String material;
+
+    private String url;
 
     private String model;
 
     @NonNull
-    private TextConfiguration name;
+    private String name;
 
     @Builder.Default
-    private List<TextConfiguration> lore = Collections.emptyList();
+    private List<String> lore = Collections.emptyList();
 
     @Builder.Default
     private boolean unbreakable = false;

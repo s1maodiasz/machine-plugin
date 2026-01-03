@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.model.type;
+package com.github.s1maodyasz.machine.model.enums;
 
 import org.jetbrains.annotations.NotNull;
 
