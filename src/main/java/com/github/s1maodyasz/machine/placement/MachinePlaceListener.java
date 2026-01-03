@@ -2,11 +2,13 @@ package com.github.s1maodyasz.machine.placement;
 
 import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.database.MachineDatabase;
+import com.github.s1maodyasz.machine.message.MessageConstants;
 import com.github.s1maodyasz.machine.model.*;
 import com.github.s1maodyasz.machine.model.enums.MachinePermissionEnum;
 import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
 import com.github.s1maodyasz.machine.provider.CustomEntityProvider;
 import com.github.s1maodyasz.machine.util.ItemDataUtil;
+import com.github.s1maodyasz.machine.util.MessageBuilder;
 import com.google.gson.Gson;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +45,7 @@ public final class MachinePlaceListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(@NotNull PlayerInteractEvent event) {
         final var action = event.getAction();
-        if (action != Action.RIGHT_CLICK_BLOCK)
-            return;
+        if (action != Action.RIGHT_CLICK_BLOCK) return;
 
         final var player = event.getPlayer();
         final var clicked = event.getClickedBlock();
@@ -52,28 +53,61 @@ public final class MachinePlaceListener implements Listener {
         final var face = event.getBlockFace();
         final var hand = event.getHand();
 
-        if (clicked == null || item == null || hand == null)
+        if (clicked == null || item == null || hand == null) {
+            MessageBuilder.of(MessageConstants.PLACE_INVALID_ITEM)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .send(player);
             return;
+        }
 
         final var encoded = ItemDataUtil.of(namespacedKey)
-            .get(item, PersistentDataType.STRING)
-            .orElse(null);
+                .get(item, PersistentDataType.STRING)
+                .orElse(null);
 
-        final var data = gson.fromJson(encoded, MachineData.class);
-
-        final var key = data.key();
-        final var configuration = configurationManager.get(data.key());
-        if (configuration == null)
+        if (encoded == null || encoded.isBlank()) {
+            MessageBuilder.of(MessageConstants.PLACE_INVALID_ITEM)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .send(player);
             return;
+        }
+
+        final MachineData data = gson.fromJson(encoded, MachineData.class);
+        if (data == null) {
+            MessageBuilder.of(MessageConstants.PLACE_INVALID_ITEM)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .send(player);
+            return;
+        }
+
+        final var configuration = configurationManager.get(data.key());
+        if (configuration == null) {
+            MessageBuilder.of(MessageConstants.PLACE_INVALID_CONFIG)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
+            event.setCancelled(true);
+            return;
+        }
 
         final var target = clicked.getRelative(face);
         if (!isReplaceable(target)) {
+            MessageBuilder.of(MessageConstants.PLACE_TARGET_NOT_REPLACEABLE)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
             event.setCancelled(true);
             return;
         }
 
         final Location placeAt = target.getLocation();
-        if (placeAt.getWorld() == null) return;
+        if (placeAt.getWorld() == null) {
+            MessageBuilder.of(MessageConstants.PLACE_WORLD_NULL)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
+            event.setCancelled(true);
+            return;
+        }
 
         final MachineLocation loc = MachineLocation.builder()
                 .worldId(placeAt.getWorld().getUID())
@@ -82,20 +116,42 @@ public final class MachinePlaceListener implements Listener {
                 .z(placeAt.getBlockZ())
                 .build();
 
-        final List<Machine> nearby = database.nearbySync(loc, RADIUS);
+        final List<Machine> nearby;
+        try {
+            nearby = database.nearbySync(loc, RADIUS);
+        } catch (Throwable t) {
+            // Not a PLACE_* constant, but it's still a placement flow error -> internal/db
+            MessageBuilder.of(MessageConstants.ERROR_DATABASE)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .send(player);
+            event.setCancelled(true);
+            return;
+        }
 
         if (hasDifferentTypeNearby(nearby, data.key())) {
+            MessageBuilder.of(MessageConstants.PLACE_DIFFERENT_TYPE_NEARBY)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
             event.setCancelled(true);
             return;
         }
 
         if (hasCompatibleNearby(nearby, data.key(), data.levels())
                 && !hasStackPermissionNearby(nearby, player.getUniqueId(), data.key(), data.levels())) {
+            MessageBuilder.of(MessageConstants.PLACE_STACK_NOT_ALLOWED)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
             event.setCancelled(true);
             return;
         }
 
         if (!spawnDisplay(placeAt, face, configuration.display())) {
+            MessageBuilder.of(MessageConstants.PLACE_SPAWN_DISPLAY_FAILED)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                    .send(player);
             event.setCancelled(true);
             return;
         }
@@ -109,10 +165,23 @@ public final class MachinePlaceListener implements Listener {
                 .upgrades(data.levels())
                 .build();
 
-        database.saveAsync(machine);
+        try {
+            database.saveAsync(machine);
+        } catch (Throwable t) {
+            MessageBuilder.of(MessageConstants.ERROR_DATABASE)
+                    .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                    .send(player);
+            event.setCancelled(true);
+            return;
+        }
 
         event.setCancelled(true);
         consumeOne(player, hand);
+
+        MessageBuilder.of(MessageConstants.PLACE_SUCCESS)
+                .with(MessageConstants.PLACEHOLDER_PLAYER, player.getName())
+                .with(MessageConstants.PLACEHOLDER_KEY, data.key())
+                .send(player);
     }
 
     private static boolean isReplaceable(@NotNull Block block) {
@@ -142,7 +211,6 @@ public final class MachinePlaceListener implements Listener {
 
     private static boolean canAddStack(@NotNull Machine machine, @NotNull UUID playerId) {
         if (playerId.equals(machine.ownerId())) return true;
-
         return machine.collaborators().stream()
                 .anyMatch(c ->
                         playerId.equals(c.playerId()) && c.permissions().contains(MachinePermissionEnum.ADD_STACK));

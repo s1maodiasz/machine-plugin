@@ -2,7 +2,6 @@ package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.MachineUpgradeConfiguration;
 import java.util.Objects;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;

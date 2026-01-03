@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
-public final class BatteryData {
+public final class BatteryData extends StackableData {
 
     @NotNull
     private String key;

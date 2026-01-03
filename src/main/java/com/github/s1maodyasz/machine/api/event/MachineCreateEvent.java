@@ -1,4 +1,3 @@
 package com.github.s1maodyasz.machine.api.event;
 
-public final class MachineCreateEvent {
-}
+public final class MachineCreateEvent {}

@@ -1,7 +1,8 @@
 package com.github.s1maodyasz.machine.model;
 
 import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
-import com.github.s1maodyasz.machine.model.types.MachineUpgradeEnum;
+
+import java.util.EnumMap;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,13 +12,15 @@ import lombok.experimental.Accessors;
 @Getter
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
-public final class MachineData {
+public final class MachineData extends StackableData {
 
     @NonNull
     private final String key;
 
-    private final Map<MachineUpgradeEnum, Integer> levels;
+    @NonNull
+    @Builder.Default
+    private final Map<MachineUpgradeEnum, Integer> levels = new EnumMap<>(MachineUpgradeEnum.class);
 
-    private final double stack;
-    private final double drops;
+    @Builder.Default
+    private final double drops = 0;
 }
