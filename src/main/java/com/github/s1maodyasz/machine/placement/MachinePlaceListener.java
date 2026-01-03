@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.placement;
 
-import com.github.s1maodyasz.machine.configuration.AbstractConfigurationManager;
+import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.database.MachineDatabase;
 import com.github.s1maodyasz.machine.model.*;
 import com.github.s1maodyasz.machine.model.enums.MachinePermissionEnum;
@@ -26,7 +26,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,29 +36,37 @@ public final class MachinePlaceListener implements Listener {
 
     private final Gson gson;
     private final NamespacedKey namespacedKey;
-    private final AbstractConfigurationManager<MachineConfiguration> configurationManager;
+    private final ConfigurationManager<MachineConfiguration> configurationManager;
     private final MachineDatabase database;
     private final CustomEntityProvider provider;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(@NotNull PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        final var action = event.getAction();
+        if (action != Action.RIGHT_CLICK_BLOCK)
+            return;
 
-        final Player player = event.getPlayer();
-        final Block clicked = event.getClickedBlock();
-        final ItemStack item = event.getItem();
-        final BlockFace face = event.getBlockFace();
-        final EquipmentSlot hand = event.getHand();
+        final var player = event.getPlayer();
+        final var clicked = event.getClickedBlock();
+        final var item = event.getItem();
+        final var face = event.getBlockFace();
+        final var hand = event.getHand();
 
-        if (clicked == null || item == null || hand == null) return;
+        if (clicked == null || item == null || hand == null)
+            return;
 
-        final MachineData data = readData(item);
-        if (data == null) return;
+        final var encoded = ItemDataUtil.of(namespacedKey)
+            .get(item, PersistentDataType.STRING)
+            .orElse(null);
 
-        final var config = configurationManager.get(data.key()).orElse(null);
-        if (config == null) return;
+        final var data = gson.fromJson(encoded, MachineData.class);
 
-        final Block target = clicked.getRelative(face);
+        final var key = data.key();
+        final var configuration = configurationManager.get(data.key());
+        if (configuration == null)
+            return;
+
+        final var target = clicked.getRelative(face);
         if (!isReplaceable(target)) {
             event.setCancelled(true);
             return;
@@ -88,12 +95,12 @@ public final class MachinePlaceListener implements Listener {
             return;
         }
 
-        if (!spawnDisplay(placeAt, face, config.display())) {
+        if (!spawnDisplay(placeAt, face, configuration.display())) {
             event.setCancelled(true);
             return;
         }
 
-        final Machine machine = Machine.builder()
+        final var machine = Machine.builder()
                 .location(loc)
                 .key(data.key())
                 .stack(data.stack())
@@ -106,14 +113,6 @@ public final class MachinePlaceListener implements Listener {
 
         event.setCancelled(true);
         consumeOne(player, hand);
-    }
-
-    private MachineData readData(@NotNull ItemStack stack) {
-        final String encoded = ItemDataUtil.of(namespacedKey)
-                .get(stack, PersistentDataType.STRING)
-                .orElse(null);
-        if (encoded == null) return null;
-        return gson.fromJson(encoded, MachineData.class);
     }
 
     private static boolean isReplaceable(@NotNull Block block) {

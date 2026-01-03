@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.issuer;
 
-import com.github.s1maodyasz.machine.configuration.AbstractConfigurationManager;
+import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.model.BatteryConfiguration;
 import com.github.s1maodyasz.machine.model.BatteryData;
 import com.github.s1maodyasz.machine.provider.CustomItemProvider;
@@ -16,13 +16,13 @@ public final class IssuerBattery extends Issuer<BatteryConfiguration, BatteryDat
             Gson gson,
             NamespacedKey namespacedKey,
             CustomItemProvider provider,
-            AbstractConfigurationManager<BatteryConfiguration> configurationManager) {
+            ConfigurationManager<BatteryConfiguration> configurationManager) {
         super(gson, namespacedKey, provider, configurationManager);
     }
 
     @Override
     public IssueResult issue(@NotNull Player player, @NotNull String key, BatteryData machineData) {
-        final var configuration = configurationManager.get(key).orElse(null);
+        final var configuration = configurationManager.get(key);
         if (configuration == null) return IssueResult.INVALID_KEY;
 
         final var itemConfiguration = configuration.item();

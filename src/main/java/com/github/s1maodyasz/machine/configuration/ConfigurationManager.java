@@ -1,23 +1,29 @@
 package com.github.s1maodyasz.machine.configuration;
 
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
-public interface ConfigurationManager<K, V> {
+public final class ConfigurationManager<V> {
 
-    void register(V value);
+    private final Map<String, V> map = new HashMap<>();
 
-    void register(K key, V value);
+    public void register(String key, V value) {
+        map.put(key, value);
+    }
 
-    void unregister(K key);
+    public void unregister(String key) {
+        map.remove(key);
+    }
 
-    boolean has(K key);
+    public V get(String key) {
+        return map.get(key);
+    }
 
-    Optional<V> get(K key);
+    public Collection<V> all() {
+        final var values = map.values();
+        return Collections.unmodifiableCollection(values);
+    }
 
-    V require(K key);
-
-    Collection<V> all();
-
-    void clear();
+    public void clear() {
+        map.clear();
+    }
 }

@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.issuer;
 
-import com.github.s1maodyasz.machine.configuration.AbstractConfigurationManager;
+import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.model.MachineData;
 import com.github.s1maodyasz.machine.provider.CustomItemProvider;
@@ -17,13 +17,13 @@ public final class IssuerMachine extends Issuer<MachineConfiguration, MachineDat
             Gson gson,
             NamespacedKey namespacedKey,
             CustomItemProvider provider,
-            AbstractConfigurationManager<MachineConfiguration> configurationManager) {
+            ConfigurationManager<MachineConfiguration> configurationManager) {
         super(gson, namespacedKey, provider, configurationManager);
     }
 
     @Override
     public IssueResult issue(@NotNull Player player, @NotNull String key, MachineData machineData) {
-        final var machineConfiguration = configurationManager.get(key).orElse(null);
+        final var machineConfiguration = configurationManager.get(key);
         if (machineConfiguration == null) return IssueResult.INVALID_KEY;
 
         final var itemConfiguration = machineConfiguration.item();

@@ -1,4 +1,4 @@
 package com.github.s1maodyasz.machine.api.event;
 
-public final class MachineCollectEvent {
+public final class MachineSellEvent {
 }
