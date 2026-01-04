@@ -5,15 +5,12 @@ import com.github.s1maodyasz.machine.model.BatteryData;
 import com.github.s1maodyasz.machine.util.formatter.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
-interface BatteryPlaceholderResolver extends PlaceholderResolver<BatteryConfiguration, BatteryData> {
+public final class BatteryPlaceholderResolver implements PlaceholderResolver<BatteryConfiguration, BatteryData> {
 
-    BatteryPlaceholderResolver STACK = (configuration, data) -> NumberFormatter.format(data.stack());
-    BatteryPlaceholderResolver TOTAL =
-            (configuration, data) -> NumberFormatter.format(data.stack() * configuration.amount());
-
-    static String resolve(
-            @NotNull String text, @NotNull BatteryConfiguration configuration, @NotNull BatteryData data) {
-        return text.replace("{machine_stack}", STACK.resolve(configuration, data))
-                .replace("{machine_drops}", TOTAL.resolve(configuration, data));
+    @Override
+    public @NotNull String resolve(String text, BatteryConfiguration configuration, BatteryData data) {
+        return text
+            .replace("{battery_stack}", NumberFormatter.format(data.stack()))
+            .replace("{battery_total}", NumberFormatter.format(configuration.amount() * data.stack()));
     }
 }

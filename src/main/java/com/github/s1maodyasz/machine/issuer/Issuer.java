@@ -1,6 +1,7 @@
 package com.github.s1maodyasz.machine.issuer;
 
 import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
+import com.github.s1maodyasz.machine.model.ItemConfigurable;
 import com.github.s1maodyasz.machine.model.MachineData;
 import com.github.s1maodyasz.machine.model.StackableData;
 import com.github.s1maodyasz.machine.provider.CustomItemProvider;
@@ -13,16 +14,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
-public abstract class Issuer<C, D extends StackableData> {
+public abstract class Issuer<C extends ItemConfigurable, D extends StackableData> {
 
     protected final Gson gson;
     protected final NamespacedKey namespacedKey;
     protected final CustomItemProvider provider;
     protected final ConfigurationManager<C> configurationManager;
+    protected final PlaceholderResolver<C, D> placeholderResolver;
 
-    @Override
-    public IssueResult issue(@NotNull Player player, @NotNull String key, MachineData machineData) {
-        final var configuration = configurationManager.get(key);
+    public IssueResult issue(@NotNull Player player, @NotNull String key, D data) {
+        final C configuration = configurationManager.get(key);
         if (configuration == null) return IssueResult.INVALID_KEY;
 
         final var itemConfiguration = configuration.item();
@@ -39,14 +40,12 @@ public abstract class Issuer<C, D extends StackableData> {
         }
 
         final var name = itemConfiguration.name();
-        final var nameResolved = MachinePlaceholderResolver.resolve(name, configuration, machineData);
+        final var nameResolved = placeholderResolver.resolve(name, configuration, data);
 
         final var lore = itemConfiguration.lore();
-        final var loreResolved = lore.stream()
-            .map(line -> MachinePlaceholderResolver.resolve(line, configuration, machineData))
-            .toList();
+        final var loreResolved = placeholderResolver.resolveAll(lore, configuration, data);
 
-        final var encoded = gson.toJson(machineData);
+        final var encoded = gson.toJson(data);
         final var stack = itemBuilder
             .name(nameResolved)
             .lore(loreResolved)

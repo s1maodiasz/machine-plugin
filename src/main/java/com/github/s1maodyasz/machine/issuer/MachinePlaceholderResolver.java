@@ -5,14 +5,12 @@ import com.github.s1maodyasz.machine.model.MachineData;
 import com.github.s1maodyasz.machine.util.formatter.NumberFormatter;
 import org.jetbrains.annotations.NotNull;
 
-interface MachinePlaceholderResolver extends PlaceholderResolver<MachineConfiguration, MachineData> {
+public final class MachinePlaceholderResolver implements PlaceholderResolver<MachineConfiguration, MachineData> {
 
-    MachinePlaceholderResolver STACK = (configuration, data) -> NumberFormatter.format(data.stack());
-    MachinePlaceholderResolver DROPS = (configuration, data) -> NumberFormatter.format(data.drops());
-
-    static String resolve(
-            @NotNull String text, @NotNull MachineConfiguration configuration, @NotNull MachineData data) {
-        return text.replace("{machine_stack}", STACK.resolve(configuration, data))
-                .replace("{machine_drops}", DROPS.resolve(configuration, data));
+    @Override
+    public @NotNull String resolve(String text, MachineConfiguration configuration, MachineData data) {
+        return text
+            .replace("{machine_stack}", NumberFormatter.format(data.stack()))
+            .replace("{machine_drops}", NumberFormatter.format(data.stack()));
     }
 }

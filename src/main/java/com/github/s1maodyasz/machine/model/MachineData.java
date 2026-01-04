@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.model;
 
-import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
+import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public final class MachineData extends StackableData {
 
     @NonNull
     @Builder.Default
-    private final Map<MachineUpgradeEnum, Integer> levels = new EnumMap<>(MachineUpgradeEnum.class);
+    private final Map<UpgradeEnum, Integer> levels = new EnumMap<>(UpgradeEnum.class);
 
     @Builder.Default
     private final double drops = 0;

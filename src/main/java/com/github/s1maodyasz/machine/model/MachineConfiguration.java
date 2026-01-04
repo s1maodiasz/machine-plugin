@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.model;
 
-import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
+import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
-public final class MachineConfiguration {
+public final class MachineConfiguration implements ItemConfigurable {
 
     @NonNull
     private String key;
@@ -34,5 +34,6 @@ public final class MachineConfiguration {
     /** Modifier for individual level */
     @NonNull
     @Singular
-    private Map<MachineUpgradeEnum, MachineUpgradeConfiguration> upgrades;
+    private Map<UpgradeEnum, MachineUpgradeConfiguration> upgrades;
+
 }

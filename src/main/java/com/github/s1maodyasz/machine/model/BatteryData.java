@@ -13,5 +13,6 @@ public final class BatteryData extends StackableData {
     @NotNull
     private String key;
 
-    private double stack;
+    private double energy;
+
 }

@@ -2,7 +2,7 @@ package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.model.MachineUpgradeConfiguration;
-import com.github.s1maodyasz.machine.model.enums.MachineUpgradeEnum;
+import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -31,12 +31,12 @@ public final class MachineConfigurationSectionAdapter {
         Objects.requireNonNull(displaySection, "Machine display section cannot be null. (key=" + key + ")");
         final var display = MachineDisplayConfigurationSectionAdapter.adapt(section);
 
-        final Map<MachineUpgradeEnum, MachineUpgradeConfiguration> upgrades = new EnumMap<>(MachineUpgradeEnum.class);
+        final Map<UpgradeEnum, MachineUpgradeConfiguration> upgrades = new EnumMap<>(UpgradeEnum.class);
         final var upgradesSection = section.getConfigurationSection("upgrades");
         if (upgradesSection == null) throw new IllegalStateException("Upgrade sections cannot be null");
 
         for (final String upgradeKey : upgradesSection.getKeys(false)) {
-            final MachineUpgradeEnum upgrade = MachineUpgradeEnum.byValue(upgradeKey);
+            final UpgradeEnum upgrade = UpgradeEnum.byValue(upgradeKey);
 
             final var upgradeSection = upgradesSection.getConfigurationSection(upgradeKey);
             Objects.requireNonNull(upgradeSection, "Upgrade section cannot be null.");

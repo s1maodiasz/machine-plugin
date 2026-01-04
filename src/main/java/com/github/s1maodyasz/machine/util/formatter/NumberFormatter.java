@@ -2,8 +2,12 @@ package com.github.s1maodyasz.machine.util.formatter;
 
 import java.text.DecimalFormat;
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NumberFormatter {
 
     private static final String NEGATIVE_SYMBOL = "-";

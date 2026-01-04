@@ -2,15 +2,16 @@ package com.github.s1maodyasz.machine.model.enums;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum MachineUpgradeEnum {
-    EFFICIENCY,
-    CAPACITY,
-    CONSUMPTION,
-    SPEED;
+public enum UpgradeEnum {
+    OUTPUT_PER_CYCLE,
+    ENERGY_CAPACITY,
+    ENERGY_COST,
+    CYCLE_SPEED,
+    BATTERY_SLOTS;
 
-    public static @NotNull MachineUpgradeEnum byValue(@NotNull String value) {
+    public static @NotNull UpgradeEnum byValue(@NotNull String value) {
         try {
-            return MachineUpgradeEnum.valueOf(value);
+            return UpgradeEnum.valueOf(value);
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid MachineUpgradeEnum: '" + value + "'", ex);
         }
