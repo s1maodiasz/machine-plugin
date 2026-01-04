@@ -20,20 +20,16 @@ public final class MachineConfiguration implements ItemConfigurable {
     private String name;
 
     @Builder.Default
-    private double price = 0;
-
-    private double drop;
+    private double drop = 0;
 
     @NonNull
     private ItemConfiguration item;
 
-    /** The way the machine gonna be displayed for player (Can be a Block or a Model) */
     @NonNull
-    private MachineDisplayConfiguration display;
+    private String model;
 
     /** Modifier for individual level */
     @NonNull
     @Singular
     private Map<UpgradeEnum, MachineUpgradeConfiguration> upgrades;
-
 }

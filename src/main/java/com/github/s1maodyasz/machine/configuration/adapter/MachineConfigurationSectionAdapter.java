@@ -27,9 +27,8 @@ public final class MachineConfigurationSectionAdapter {
         Objects.requireNonNull(itemSection, "Machine item section cannot be null. (key=" + key + ")");
         final var item = ItemConfigurationSectionAdapter.adapt(itemSection);
 
-        final var displaySection = section.getConfigurationSection("display");
-        Objects.requireNonNull(displaySection, "Machine display section cannot be null. (key=" + key + ")");
-        final var display = MachineDisplayConfigurationSectionAdapter.adapt(section);
+        final var model = section.getString("model");
+        Objects.requireNonNull(model, "Machine model cannot be null. (key=" + key + ")");
 
         final Map<UpgradeEnum, MachineUpgradeConfiguration> upgrades = new EnumMap<>(UpgradeEnum.class);
         final var upgradesSection = section.getConfigurationSection("upgrades");
@@ -48,10 +47,9 @@ public final class MachineConfigurationSectionAdapter {
         return MachineConfiguration.builder()
                 .key(key)
                 .name(name)
-                .price(price)
                 .drop(drop)
                 .item(item)
-                .display(display)
+                .model(model)
                 .upgrades(upgrades)
                 .build();
     }

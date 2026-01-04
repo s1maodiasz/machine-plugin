@@ -6,22 +6,24 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MachineBatteriesConsumptionProcessor {
 
-    @NotNull Machine process(final @NotNull Machine machine, final double cost);
+    @NotNull
+    Machine process(final @NotNull Machine machine, final double cost);
 
     final class Ordered implements MachineBatteriesConsumptionProcessor {
         @Override
         public @NotNull Machine process(@NotNull Machine machine, double cost) {
             double remaining = -cost;
-            final var batteries = machine.batteries();
+            final var batteries = machine.getBatteries();
 
             for (int i = 0; i < batteries.size(); i++) {
                 var battery = batteries.get(i);
                 if (battery.deactivated()) continue;
 
-                remaining += battery.total();
+                remaining += battery.getTotal();
 
                 final double carry = Math.max(0, remaining);
-                batteries.set(i, battery.toBuilder().total(carry).build());
+                battery.setTotal(carry);
+                batteries.set(i, battery);
 
                 if (remaining >= 0) break;
             }
@@ -35,8 +37,9 @@ public interface MachineBatteriesConsumptionProcessor {
         public @NotNull Machine process(@NotNull Machine machine, double cost) {
             if (cost <= 0) return machine;
 
-            final var batteries = machine.batteries();
-            final long active = batteries.stream().filter(BatterySlot::activated).count();
+            final var batteries = machine.getBatteries();
+            final long active =
+                    batteries.stream().filter(BatterySlot::isActivated).count();
             if (active <= 0) return machine;
 
             final double share = cost / (double) active;
@@ -46,15 +49,16 @@ public interface MachineBatteriesConsumptionProcessor {
                 var battery = batteries.get(i);
                 if (battery.deactivated()) continue;
 
-                final double current = battery.total();
-                final double toPay = share + carry;
+                final double current = battery.getTotal();
+                final double pay = share + carry;
 
-                final double paid = Math.min(current, toPay);
+                final double paid = Math.min(current, pay);
                 final double newTotal = current - paid;
 
-                batteries.set(i, battery.toBuilder().total(newTotal).build());
+                battery.setTotal(newTotal);
+                batteries.set(i, battery);
 
-                carry = toPay - paid;
+                carry = pay - paid;
             }
 
             return machine;

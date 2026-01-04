@@ -6,12 +6,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
+import org.bukkit.entity.ItemDisplay;
 
 /** They stay always on same position */
 public final class BetterModelProvider implements CustomEntityProvider {
 
     @Override
     public Entity spawn(Location location, String model) {
+        System.out.println(model);
+        BetterModel.models().stream().map(ModelRenderer::name).forEach(System.out::println);
         final ModelRenderer renderer = BetterModel.model(model).orElse(null);
         if (renderer == null) return null;
 
@@ -21,14 +24,17 @@ public final class BetterModelProvider implements CustomEntityProvider {
     }
 
     private Interaction createDefaultEntity(Location location) {
+        if (location.getWorld() == null) throw new IllegalStateException("World is null");
+
         Interaction baseEntity = (Interaction) location.getWorld().spawnEntity(location, EntityType.INTERACTION);
+
         baseEntity.setInvulnerable(true);
         baseEntity.setGravity(false);
         baseEntity.setCustomNameVisible(false);
         baseEntity.setPersistent(true);
         baseEntity.setSilent(true);
         baseEntity.setGlowing(false);
-        baseEntity.setPersistent(true);
+
         return baseEntity;
     }
 }

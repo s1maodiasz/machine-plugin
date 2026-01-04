@@ -2,33 +2,27 @@ package com.github.s1maodyasz.machine.engine;
 
 import com.github.s1maodyasz.machine.model.Machine;
 import com.github.s1maodyasz.machine.model.enums.ConsumptionMode;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
+@NoArgsConstructor
 public final class MachineBatteriesConsumptionProcessors {
 
-    private static final MachineBatteriesConsumptionProcessor ORDERED =
-            new MachineBatteriesConsumptionProcessor.Ordered();
+    private final MachineBatteriesConsumptionProcessor ordered = new MachineBatteriesConsumptionProcessor.Ordered();
 
-    private static final MachineBatteriesConsumptionProcessor SPLIT =
-            new MachineBatteriesConsumptionProcessor.Split();
+    private final MachineBatteriesConsumptionProcessor split = new MachineBatteriesConsumptionProcessor.Split();
 
-    private MachineBatteriesConsumptionProcessors() {}
-
-    public static @NotNull Machine process(
-            @NotNull ConsumptionMode mode,
-            @NotNull Machine machine,
-            double cost
-    ) {
+    public @NotNull Machine process(@NotNull ConsumptionMode mode, @NotNull Machine machine, double cost) {
         return switch (mode) {
-            case ORDERED -> ORDERED.process(machine, cost);
-            case SPLIT -> SPLIT.process(machine, cost);
+            case ORDERED -> ordered.process(machine, cost);
+            case SPLIT -> split.process(machine, cost);
         };
     }
 
-    public static @NotNull MachineBatteriesConsumptionProcessor of(@NotNull ConsumptionMode mode) {
+    public @NotNull MachineBatteriesConsumptionProcessor of(@NotNull ConsumptionMode mode) {
         return switch (mode) {
-            case ORDERED -> ORDERED;
-            case SPLIT -> SPLIT;
+            case ORDERED -> ordered;
+            case SPLIT -> split;
         };
     }
 }

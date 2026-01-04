@@ -1,1 +1,111 @@
+# Just mongo supported for dev enjoy
+database:
+    url: "mongodb://localhost:27017"
+    databaseName: "machine_database"
+    collectionName: "machine"
+    operationTimeoutMillis: 1500
+    cache:
+        maximumSize: 100000
+        expireAfterAccessSeconds: 1800 # In seconds
+
 machines:
+    generator:
+        name: "<green>Generator"
+        price: 2500
+        drop: 1.0
+        item:
+            material: "PAPER"
+            name: "<green>Generator"
+            lore:
+                - "<gray>Uma máquina simples."
+                - "<gray>Drops atuais na máquina <green><machine_drops>"
+            unbreakable: true
+        model: "demon_knight"
+        upgrades:
+            OUTPUT_PER_CYCLE:
+                levels:
+                    1: 1.0
+                    2: 2.0
+                    3: 3.5
+            ENERGY_COST:
+                levels:
+                    1: 10.0
+                    2: 9.0
+                    3: 8.0
+            CYCLE_SPEED:
+                levels:
+                    1: 1.0
+                    2: 1.5
+                    3: 2.0
+            ENERGY_CAPACITY:
+                levels:
+                    1: 1000.0
+                    2: 2000.0
+                    3: 3500.0
+            BATTERY_SLOTS:
+                levels:
+                    1: 1.0
+                    2: 2.0
+                    3: 3.0
+
+batteries:
+    basic:
+        key: "basic"
+        amount: 1000
+        item:
+            material: "PAPER"
+            name: "<yellow>Basic Battery"
+            lore:
+                - "<gray>Armazena energia."
+                - "<gray>Energia: <yellow><battery_energy>"
+            unbreakable: true
+        modifiers:
+            ENERGY_CAPACITY: 1000
+            ENERGY_COST: -1
+            OUTPUT_PER_CYCLE: 0.0
+            CYCLE_SPEED: 0.0
+            BATTERY_SLOTS: 0.0
+
+    advanced:
+        key: "advanced"
+        amount: 5000
+        item:
+            material: "PAPER"
+            name: "<gold>Advanced Battery"
+            lore:
+                - "<gray>Mais capacidade."
+                - "<gray>Energia: <yellow><battery_energy>"
+            unbreakable: true
+        modifiers:
+            ENERGY_CAPACITY: 5000
+            ENERGY_COST: -2
+
+messages:
+    unauthorized: "<red>Não tens permissão: <yellow><permission><red>."
+    issue:
+        success: "<green>Item entregue: <yellow><key> <green>x<yellow><amount><green>."
+        invalidKey: "<red>Chave inválida: <yellow><key><red>."
+        invalidAmount: "<red>Quantidade inválida: <yellow><amount><red>."
+        inventoryFull: "<red>O teu inventário está cheio."
+    place:
+        success: "<green>Máquina <yellow><key> <green>colocada com sucesso."
+        invalidItem: "<red>Este item não é uma máquina válida."
+        invalidConfig: "<red>Config inválida para a máquina <yellow><key><red>."
+        targetNotReplaceable: "<red>Não podes colocar a máquina aí."
+        worldNull: "<red>Mundo inválido."
+        differentTypeNearby: "<red>Já existe uma máquina de outro tipo muito perto."
+        stackNotAllowed: "<red>Não tens permissão para stackar esta máquina."
+        spawnDisplayFailed: "<red>Falha ao criar a entidade/modelo da máquina."
+    break:
+        success: "<green>Máquina removida com sucesso."
+        notAMachine: "<red>Isto não é uma máquina."
+        noPermission: "<red>Não tens permissão para destruir esta máquina."
+    open:
+        success: "<green>Abriste a máquina."
+        noPermission: "<red>Não tens permissão para abrir esta máquina."
+    error:
+        internal: "<red>Ocorreu um erro interno."
+        database: "<red>Ocorreu um erro ao aceder à base de dados."
+    collect:
+        empty: "&cSem drops para serem coletados."
+        success: "&aForam adicionados <value> coins na sua conta por vender <drops>."

@@ -1,12 +1,10 @@
 package com.github.s1maodyasz.machine.configuration.adapter;
 
 import com.github.s1maodyasz.machine.model.MachineUpgradeConfiguration;
-
+import com.github.s1maodyasz.machine.util.NumberParseUtil;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-
-import com.github.s1maodyasz.machine.util.NumberParseUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,7 +15,8 @@ public final class MachineUpgradeConfigurationSectionAdapter {
     public static MachineUpgradeConfiguration adapt(final ConfigurationSection section) {
         Objects.requireNonNull(section, "section");
 
-        final var levelsSection = Objects.requireNonNull(section.getConfigurationSection("levels"), "Upgrade 'levels' section cannot be null.");
+        final var levelsSection = Objects.requireNonNull(
+                section.getConfigurationSection("levels"), "Upgrade 'levels' section cannot be null.");
 
         final Map<Integer, Double> levels = new TreeMap<>();
 

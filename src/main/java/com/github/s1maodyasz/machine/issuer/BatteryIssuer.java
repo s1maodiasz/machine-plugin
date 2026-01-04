@@ -7,9 +7,14 @@ import com.github.s1maodyasz.machine.provider.CustomItemProvider;
 import com.google.gson.Gson;
 import org.bukkit.NamespacedKey;
 
-public final class BatteryIssuer extends Issuer<BatteryConfiguration, BatteryData> {
+public final class BatteryIssuer extends ItemIssuer<BatteryConfiguration, BatteryData> {
 
-    public BatteryIssuer(Gson gson, NamespacedKey namespacedKey, CustomItemProvider provider, ConfigurationManager<BatteryConfiguration> configurationManager, PlaceholderResolver<BatteryConfiguration, BatteryData> placeholderResolver) {
+    public BatteryIssuer(
+            Gson gson,
+            NamespacedKey namespacedKey,
+            CustomItemProvider provider,
+            ConfigurationManager<BatteryConfiguration> configurationManager,
+            PlaceholderResolver<BatteryConfiguration, BatteryData> placeholderResolver) {
         super(gson, namespacedKey, provider, configurationManager, placeholderResolver);
     }
 }

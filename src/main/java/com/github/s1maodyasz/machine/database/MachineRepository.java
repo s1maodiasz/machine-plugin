@@ -23,7 +23,7 @@ public final class MachineRepository {
     private final @NotNull MongoCollection<Machine> collection;
 
     public void upsert(@NotNull Machine machine) {
-        collection.replaceOne(eq("_id", machine.id()), machine, new ReplaceOptions().upsert(true));
+        collection.replaceOne(eq("_id", machine.getId()), machine, new ReplaceOptions().upsert(true));
     }
 
     public void upsertAll(@NotNull List<Machine> machines) {
@@ -32,7 +32,7 @@ public final class MachineRepository {
         final var upsertOptions = new ReplaceOptions().upsert(true);
         final List<WriteModel<Machine>> ops = new ArrayList<>(machines.size());
         for (var machine : machines) {
-            ops.add(new ReplaceOneModel<>(eq("_id", machine.id()), machine, upsertOptions));
+            ops.add(new ReplaceOneModel<>(eq("_id", machine.getId()), machine, upsertOptions));
         }
 
         collection.bulkWrite(ops, new BulkWriteOptions().ordered(false));
@@ -45,10 +45,10 @@ public final class MachineRepository {
     public @NotNull Optional<Machine> findByLocation(@NotNull MachineLocation location) {
         return Optional.ofNullable(collection
                 .find(and(
-                        eq("worldId", location.worldId()),
-                        eq("x", location.x()),
-                        eq("y", location.y()),
-                        eq("z", location.z())))
+                        eq("worldId", location.getWorldId()),
+                        eq("x", location.getX()),
+                        eq("y", location.getY()),
+                        eq("z", location.getZ())))
                 .first());
     }
 

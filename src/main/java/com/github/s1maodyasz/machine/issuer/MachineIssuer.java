@@ -7,9 +7,14 @@ import com.github.s1maodyasz.machine.provider.CustomItemProvider;
 import com.google.gson.Gson;
 import org.bukkit.NamespacedKey;
 
-public final class MachineIssuer extends Issuer<MachineConfiguration, MachineData> {
+public final class MachineIssuer extends ItemIssuer<MachineConfiguration, MachineData> {
 
-    public MachineIssuer(Gson gson, NamespacedKey namespacedKey, CustomItemProvider provider, ConfigurationManager<MachineConfiguration> configurationManager, PlaceholderResolver<MachineConfiguration, MachineData> placeholderResolver) {
+    public MachineIssuer(
+            Gson gson,
+            NamespacedKey namespacedKey,
+            CustomItemProvider provider,
+            ConfigurationManager<MachineConfiguration> configurationManager,
+            PlaceholderResolver<MachineConfiguration, MachineData> placeholderResolver) {
         super(gson, namespacedKey, provider, configurationManager, placeholderResolver);
     }
 }

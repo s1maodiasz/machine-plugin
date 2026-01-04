@@ -1,15 +1,12 @@
 package com.github.s1maodyasz.machine.model;
 
 import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Singular;
 import lombok.experimental.Accessors;
-
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 @Getter
 @Builder(toBuilder = true)
@@ -26,5 +23,4 @@ public final class BatteryConfiguration implements ItemConfigurable {
 
     @Singular
     private final Map<UpgradeEnum, Double> modifiers;
-
 }

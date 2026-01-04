@@ -2,3 +2,5 @@ name: machine-plugin
 version: '1.0.0'
 main: com.github.s1maodyasz.machine.MachinePlugin
 api-version: '1.21'
+depend:
+    - BetterModel

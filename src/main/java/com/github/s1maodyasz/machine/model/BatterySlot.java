@@ -1,15 +1,13 @@
 package com.github.s1maodyasz.machine.model;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
+
 import lombok.NonNull;
-import lombok.experimental.Accessors;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@Getter
-@Builder(toBuilder = true)
-@Accessors(fluent = true)
-public final class BatterySlot {
+@Data
+public class BatterySlot {
 
     @NonNull
     @BsonProperty("key")
@@ -24,7 +22,9 @@ public final class BatterySlot {
     @BsonProperty("insertionAt")
     private long insertionAt;
 
+    @BsonIgnore
     public boolean deactivated() {
         return !activated;
     }
+
 }

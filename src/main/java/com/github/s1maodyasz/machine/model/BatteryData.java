@@ -1,18 +1,17 @@
 package com.github.s1maodyasz.machine.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-@Builder(toBuilder = true)
+@SuperBuilder(toBuilder = true)
 @Accessors(fluent = true)
-public final class BatteryData extends StackableData {
+public final class BatteryData extends Data {
 
     @NotNull
     private String key;
 
     private double energy;
-
 }

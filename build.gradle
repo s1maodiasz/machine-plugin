@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    id("com.diffplug.spotless") version "6.25.0"
+    id 'com.diffplug.spotless' version "6.25.0"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.github.s1maodyasz'
@@ -48,4 +49,9 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
     }
+}
+
+tasks.shadowJar {
+    final folder = project.property("build.destination")
+    destinationDirectory = file(folder)
 }

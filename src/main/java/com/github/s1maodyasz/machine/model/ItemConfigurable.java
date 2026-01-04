@@ -4,6 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ItemConfigurable {
 
-    @NotNull ItemConfiguration item();
-
+    @NotNull
+    ItemConfiguration item();
 }

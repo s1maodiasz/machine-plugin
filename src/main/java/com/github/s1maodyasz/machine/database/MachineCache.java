@@ -45,13 +45,13 @@ public final class MachineCache {
     }
 
     public void put(@NotNull Machine machine) {
-        final UUID id = machine.id();
+        final UUID id = machine.getId();
         byId.put(id, machine);
 
-        final MachineLocation loc = machine.location();
-        final long packed = pack(loc.x(), loc.y(), loc.z());
+        final MachineLocation loc = machine.getLocation();
+        final long packed = pack(loc.getX(), loc.getY(), loc.getZ());
 
-        worldCache(loc.worldId()).put(packed, id);
+        worldCache(loc.getWorldId()).put(packed, id);
     }
 
     public Optional<Machine> get(@NotNull UUID id) {
@@ -59,7 +59,7 @@ public final class MachineCache {
     }
 
     public Optional<Machine> localize(@NotNull MachineLocation location) {
-        final UUID id = worldCache(location.worldId()).getIfPresent(pack(location.x(), location.y(), location.z()));
+        final UUID id = worldCache(location.getWorldId()).getIfPresent(pack(location.getX(), location.getY(), location.getZ()));
         if (id == null) return Optional.empty();
         return Optional.ofNullable(byId.getIfPresent(id));
     }
@@ -67,8 +67,8 @@ public final class MachineCache {
     public void remove(@NotNull UUID id) {
         final Machine machine = byId.getIfPresent(id);
         if (machine != null) {
-            final MachineLocation loc = machine.location();
-            worldCache(loc.worldId()).invalidate(pack(loc.x(), loc.y(), loc.z()));
+            final MachineLocation loc = machine.getLocation();
+            worldCache(loc.getWorldId()).invalidate(pack(loc.getX(), loc.getY(), loc.getZ()));
         }
         byId.invalidate(id);
     }
@@ -76,12 +76,12 @@ public final class MachineCache {
     public @NotNull List<Machine> nearby(@NotNull MachineLocation location, int radius) {
         if (radius < 0) return List.of();
 
-        final UUID worldId = location.worldId();
+        final UUID worldId = location.getWorldId();
         final Cache<Long, UUID> worldIndex = worldCache(worldId);
 
-        final int cx = location.x();
-        final int cy = location.y();
-        final int cz = location.z();
+        final int cx = location.getX();
+        final int cy = location.getY();
+        final int cz = location.getZ();
 
         final int r2 = radius * radius;
         final List<Machine> result = new ArrayList<>();

@@ -15,58 +15,59 @@ import org.jetbrains.annotations.NotNull;
 public final class MachineSnapshotUpdater {
 
     private final MachineDatabase database;
-
-    private MachineBatteriesConsumptionProcessor machineBatteriesConsumptionProcessor;
+    private final MachineBatteriesConsumptionProcessors processors;
 
     public @NotNull Machine update(@NotNull Machine machine, final @NotNull MachineConfiguration configuration) {
-        var engine = machine.engine();
+        var engine = machine.getEngine();
         if (engine.isIdle()) return machine;
 
-        final long lastInteraction = engine.lastInteractionAt();
-        final long now = System.currentTimeMillis();
-        final long difference = Math.max(0, now - lastInteraction);
+        final var lastInteraction = engine.getLastInteractionAt();
+        final var now = System.currentTimeMillis();
+        final var difference = Math.max(0, now - lastInteraction);
 
-        final double speed = getUpgradeValue(machine, configuration, UpgradeEnum.CYCLE_SPEED); // ciclos/seg
+        final var speed = getUpgradeValue(machine, configuration, UpgradeEnum.CYCLE_SPEED);
         if (speed <= 0) return machine;
 
-        final long totalCyclesFromLastInteraction = (long) Math.floor(difference * speed / 1000);
+        final var totalCyclesFromLastInteraction = (long) Math.floor(difference * speed / 1000);
         if (totalCyclesFromLastInteraction <= 0) return machine;
 
-        final double energy = machine.energy();
-        final double energyCost = getUpgradeValue(machine, configuration, UpgradeEnum.ENERGY_COST);
+        final var energy = machine.energy();
+        final var energyCost = getUpgradeValue(machine, configuration, UpgradeEnum.ENERGY_COST);
         if (energyCost <= 0) return machine;
 
-        final long totalPossibleCycles = (long) Math.floor(energy / energyCost);
-        final long totalRealCycles = Math.min(totalCyclesFromLastInteraction, totalPossibleCycles);
+        final var totalPossibleCycles = (long) Math.floor(energy / energyCost);
+        final var totalRealCycles = Math.min(totalCyclesFromLastInteraction, totalPossibleCycles);
 
         if (totalRealCycles <= 0) {
-            engine = engine.toBuilder().active(false).build();
-            machine = machine.toBuilder().engine(engine).build();
+            engine.setActive(false);
+            machine.setEngine(engine);
             database.saveAsync(machine);
             return machine;
         }
 
-        final double energyToConsume = totalRealCycles * energyCost;
-        machine = MachineBatteriesConsumptionProcessors.process(machine.consumptionMode(), machine, energyToConsume);
+        final var energyToConsume = totalRealCycles * energyCost;
+        machine = processors.process(machine.getConsumptionMode(), machine, energyToConsume);
 
-        final double outputPerCycle = getUpgradeValue(machine, configuration, UpgradeEnum.OUTPUT_PER_CYCLE);
-        final double dropsToAdd = outputPerCycle * totalRealCycles;
+        final var outputPerCycle = getUpgradeValue(machine, configuration, UpgradeEnum.OUTPUT_PER_CYCLE);
+        final var dropsToAdd = outputPerCycle * totalRealCycles;
 
-        final long cycleTimeMs = Math.max(1, (long) Math.floor(1000 / speed));
-        final long newLastInteractionAt = lastInteraction + (totalRealCycles * cycleTimeMs);
+        final var cycleTimeMs = Math.max(1, (long) Math.floor(1000 / speed));
+        final var newLastInteractionAt = lastInteraction + (totalRealCycles * cycleTimeMs);
 
-        engine = engine.toBuilder().lastInteractionAt(newLastInteractionAt).build();
-        machine = machine.toBuilder()
-            .drops(machine.drops() + dropsToAdd)
-            .engine(engine)
-            .build();
+        var drops = machine.getDrops();
+        drops += dropsToAdd;
+
+        engine.setLastInteractionAt(newLastInteractionAt);
+        machine.setDrops(drops);
+        machine.setEngine(engine);
 
         database.saveAsync(machine);
         return machine;
     }
 
-    private double getUpgradeValue(final Machine machine, final MachineConfiguration configuration, final UpgradeEnum upgrade) {
-        final var machineOpcUpgradeLevel = machine.upgrades().get(upgrade);
+    private double getUpgradeValue(
+            final Machine machine, final MachineConfiguration configuration, final UpgradeEnum upgrade) {
+        final var machineOpcUpgradeLevel = machine.getUpgrades().get(upgrade.toString());
         return configuration.upgrades().get(upgrade).levels().get(machineOpcUpgradeLevel);
     }
 }

@@ -8,15 +8,17 @@ import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
 import com.github.s1maodyasz.machine.issuer.IssueResult;
-import com.github.s1maodyasz.machine.issuer.Issuer;
+import com.github.s1maodyasz.machine.issuer.ItemIssuer;
 import com.github.s1maodyasz.machine.message.MessageConstants;
 import com.github.s1maodyasz.machine.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.model.MachineData;
-import com.github.s1maodyasz.machine.util.MessageBuilder;
+import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
+import com.github.s1maodyasz.machine.provider.MiniMessageProvider;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -27,55 +29,71 @@ public final class MachineCommand extends BaseCommand {
     private static final String ADMIN_PERMISSION = "machine.admin";
 
     private final Plugin plugin;
-    private final Issuer<MachineConfiguration, MachineData> issuer;
+    private final ItemIssuer<MachineConfiguration, MachineData> issuer;
 
     @Default
-    public void onDefault(CommandSender sender) {}
+    public void onDefault(CommandSender sender) {
+        sender.sendMessage("&cNothing is here.");
+    }
 
     @Subcommand("issue")
-    @Description("Dá máquinas a um jogador")
+    @Description("Dá baterias a um jogador")
     @Syntax("<player> <key> <amount>")
     @CommandCompletion("@players @key 1|5|10|64")
-    public void onIssue(CommandSender sender, String playerName, String key, double amount) {
-        final ConfigurationSection messages = plugin.getConfig().getConfigurationSection("messages");
-
-        final String prefix = messages != null ? messages.getString(MessageConstants.PREFIX, "") : "";
-
+    public void onIssue(CommandSender sender, String playerName, String key, int amount) {
         if (!sender.hasPermission(ADMIN_PERMISSION)) {
-            final String msg = messages != null ? messages.getString(MessageConstants.NO_PERMISSION, "") : "";
-            MessageBuilder.of(prefix + msg)
-                    .with(MessageConstants.PLACEHOLDER_PERMISSION, ADMIN_PERMISSION)
-                    .send(sender);
+            System.out.println(MessageConstants.UNAUTHORIZED);
+            sender.sendMessage(MiniMessageProvider.MM.deserialize(
+                    MessageConstants.UNAUTHORIZED,
+                    TagResolver.builder()
+                            .resolver(Placeholder.parsed("player", playerName))
+                            .build()));
             return;
         }
-
         if (amount <= 0) {
-            final String msg = messages != null ? messages.getString(MessageConstants.ISSUE_INVALID_AMOUNT, "") : "";
-            MessageBuilder.of(prefix + msg)
-                    .with(MessageConstants.PLACEHOLDER_AMOUNT, amount)
-                    .send(sender);
+            sender.sendMessage(MiniMessageProvider.MM.deserialize(
+                    MessageConstants.ISSUE_INVALID_AMOUNT,
+                    TagResolver.builder()
+                            .resolver(Placeholder.parsed("amount", String.valueOf(amount)))
+                            .build()));
             return;
         }
-
         final Player target = Bukkit.getPlayerExact(playerName);
+
         if (target == null) return;
 
-        final MachineData data = MachineData.builder().stack(amount).build();
-        final IssueResult result = issuer.issue(target, key, data);
+        final var data = MachineData
+            .builder()
+            .key(key)
+            .level(UpgradeEnum.BATTERY_SLOTS, 1)
+            .level(UpgradeEnum.CYCLE_SPEED, 1)
+            .level(UpgradeEnum.ENERGY_CAPACITY, 1)
+            .level(UpgradeEnum.ENERGY_COST, 1)
+            .level(UpgradeEnum.OUTPUT_PER_CYCLE, 1)
+            .build();
 
-        final String path =
-                switch (result) {
-                    case SUCCESS -> MessageConstants.ISSUE_SUCCESS;
-                    case INVALID_KEY -> MessageConstants.ISSUE_INVALID_KEY;
-                    case INVALID_AMOUNT -> MessageConstants.ISSUE_INVALID_AMOUNT;
-                    case INVENTORY_FULL -> MessageConstants.ISSUE_INVENTORY_FULL;
-                };
-
-        final String msg = messages != null ? messages.getString(path, "") : "";
-        MessageBuilder.of(prefix + msg)
-                .with(MessageConstants.PLACEHOLDER_PLAYER, playerName)
-                .with(MessageConstants.PLACEHOLDER_KEY, key)
-                .with(MessageConstants.PLACEHOLDER_AMOUNT, amount)
-                .send(sender);
+        final IssueResult result = issuer.issue(target, data, amount);
+        switch (result) {
+            case SUCCESS:
+                sender.sendMessage(MiniMessageProvider.MM.deserialize(
+                        MessageConstants.ISSUE_SUCCESS,
+                        TagResolver.builder()
+                                .resolver(Placeholder.parsed("player", playerName))
+                                .resolver(Placeholder.parsed("key", key))
+                                .resolver(Placeholder.parsed("amount", String.valueOf(amount)))
+                                .build()));
+                break;
+            case INVALID_KEY:
+                sender.sendMessage(MessageConstants.ISSUE_INVALID_KEY);
+                break;
+            case INVALID_AMOUNT:
+                sender.sendMessage(MessageConstants.ISSUE_INVALID_AMOUNT);
+                break;
+            case INVENTORY_FULL:
+                sender.sendMessage(MessageConstants.ISSUE_INVENTORY_FULL);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + result);
+        }
     }
 }

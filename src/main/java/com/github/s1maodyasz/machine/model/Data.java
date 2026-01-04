@@ -1,14 +1,12 @@
 package com.github.s1maodyasz.machine.model;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@RequiredArgsConstructor
+@SuperBuilder(toBuilder = true)
 @Accessors(fluent = true)
-public abstract class StackableData {
-
-    protected double stack;
-
+public abstract class Data {
+    protected final String key;
 }

@@ -1,15 +1,17 @@
 package com.github.s1maodyasz.machine.util;
 
+import com.github.s1maodyasz.machine.provider.MiniMessageProvider;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -19,11 +21,16 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.profile.PlayerProfile;
-import org.bukkit.profile.PlayerTextures;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,19 +40,20 @@ public final class ItemBuilder {
 
     public static final ItemStack NONE = ItemBuilder.of(Material.STONE).build();
 
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-
     private ItemStack item;
+    private ItemMeta meta;
 
-    @Getter(lazy = true)
-    private final ItemMeta meta = Objects.requireNonNull(item.getItemMeta(), "ItemMeta null for " + item.getType());
+    public ItemBuilder(@NotNull ItemStack item) {
+        this.item = item.clone();
+        this.meta = Objects.requireNonNull(this.item.getItemMeta(), "ItemMeta null for " + this.item.getType());
+    }
 
     public static @NotNull ItemBuilder of() {
         return of(Material.AIR);
     }
 
     public static @NotNull ItemBuilder of(@NotNull Material material) {
-        return of(material, 1);
+        return new ItemBuilder(new ItemStack(material, 1));
     }
 
     public static @NotNull ItemBuilder of(@NotNull Material material, int amount) {
@@ -53,22 +61,23 @@ public final class ItemBuilder {
     }
 
     public static @NotNull ItemBuilder of(@NotNull ItemStack base) {
-        return new ItemBuilder(base.clone());
+        return new ItemBuilder(base);
     }
 
-    public @NotNull ItemBuilder type(Material type) {
+    public @NotNull ItemBuilder type(@NotNull Material type) {
         this.item.setType(type);
+        this.meta = Objects.requireNonNull(this.item.getItemMeta(), "ItemMeta null for " + this.item.getType());
         return this;
     }
 
-    public @NotNull ItemBuilder type(String typeName) {
+    public @NotNull ItemBuilder type(@NotNull String typeName) {
         final var material = MaterialsUtil.valueOf(typeName);
         return type(material);
     }
 
-    public @NotNull ItemBuilder stack(ItemStack item) {
-        this.item = item;
-        this.meta = item.getItemMeta();
+    public @NotNull ItemBuilder stack(@NotNull ItemStack item) {
+        this.item = item.clone();
+        this.meta = Objects.requireNonNull(this.item.getItemMeta(), "ItemMeta null for " + this.item.getType());
         return this;
     }
 
@@ -78,7 +87,7 @@ public final class ItemBuilder {
     }
 
     public @NotNull ItemBuilder name(@Nullable String miniMsg) {
-        meta().displayName(miniMsg == null ? null : MINI_MESSAGE.deserialize(miniMsg));
+        meta().displayName(miniMsg == null ? null : MiniMessageProvider.MM.deserialize(miniMsg));
         return this;
     }
 
@@ -87,15 +96,28 @@ public final class ItemBuilder {
         return this;
     }
 
-    public @NotNull ItemBuilder lore(@Nullable List<String> linesMiniMsg) {
-        if (linesMiniMsg == null) {
+    public @NotNull ItemBuilder lore(@Nullable List<Component> lines) {
+        if (lines == null) {
             meta().lore(null);
             return this;
         }
-        List<Component> lore = new ArrayList<>(linesMiniMsg.size());
-        for (String s : linesMiniMsg) lore.add(MINI_MESSAGE.deserialize(s));
-        meta().lore(lore);
+
+        // cópia defensiva (e garante mutável caso algum meta/impl mexa)
+        meta().lore(new ArrayList<>(lines));
         return this;
+    }
+
+    public @NotNull ItemBuilder lore(@Nullable String... lines) {
+        if (lines == null) {
+            meta().lore(null);
+            return this;
+        }
+
+        final List<Component> lore = new ArrayList<>(lines.length);
+        for (String line : lines) {
+            lore.add(line == null ? Component.empty() : MiniMessageProvider.MM.deserialize(line));
+        }
+        return lore(lore);
     }
 
     public @NotNull ItemBuilder unbreakable(boolean unbreakable) {
@@ -165,7 +187,7 @@ public final class ItemBuilder {
 
     public @NotNull ItemBuilder skullOwner(@NotNull UUID uuid, @NotNull String name) {
         if (meta() instanceof SkullMeta sm) {
-            PlayerProfile profile = Bukkit.createProfile(uuid, name);
+            var profile = Bukkit.createProfile(uuid, name);
             sm.setOwnerProfile(profile);
         }
         return this;
@@ -173,13 +195,16 @@ public final class ItemBuilder {
 
     public @NotNull ItemBuilder skullTextureUrl(@NotNull String textureUrl) {
         if (!(meta() instanceof SkullMeta sm)) return this;
-        PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID(), "head");
-        PlayerTextures textures = profile.getTextures();
+
+        var profile = Bukkit.createProfile(UUID.randomUUID(), "head");
+        var textures = profile.getTextures();
+
         try {
             textures.setSkin(new URL(textureUrl));
         } catch (Exception ignored) {
             return this;
         }
+
         profile.setTextures(textures);
         sm.setOwnerProfile(profile);
         return this;
@@ -212,6 +237,10 @@ public final class ItemBuilder {
     public @NotNull ItemStack build() {
         item.setItemMeta(meta());
         return item;
+    }
+
+    private ItemMeta meta() {
+        return Objects.requireNonNull(meta, "ItemMeta is null for " + item.getType());
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

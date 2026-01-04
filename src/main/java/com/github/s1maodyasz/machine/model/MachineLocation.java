@@ -1,19 +1,17 @@
 package com.github.s1maodyasz.machine.model;
 
 import java.util.UUID;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+
+import lombok.*;
+import lombok.Data;
 import lombok.experimental.Accessors;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-@Getter
-@Builder(toBuilder = true)
-@Accessors(fluent = true)
-public final class MachineLocation {
+@Data
+@AllArgsConstructor
+public class MachineLocation {
 
     @BsonProperty("worldId")
-    @NonNull
     private UUID worldId;
 
     @BsonProperty("x")
