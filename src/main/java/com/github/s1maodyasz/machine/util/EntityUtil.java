@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.entity.EntityType;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class EntitiesUtil {
+public final class EntityUtil {
 
     public static EntityType valueOf(String type) {
         try {

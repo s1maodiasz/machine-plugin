@@ -1,6 +1,5 @@
 package com.github.s1maodyasz.machine.util;
 
-import com.github.s1maodyasz.machine.provider.MiniMessageProvider;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,14 +70,8 @@ public final class ItemBuilder {
     }
 
     public @NotNull ItemBuilder type(@NotNull String typeName) {
-        final var material = MaterialsUtil.valueOf(typeName);
+        final var material = MaterialUtil.valueOf(typeName);
         return type(material);
-    }
-
-    public @NotNull ItemBuilder stack(@NotNull ItemStack item) {
-        this.item = item.clone();
-        this.meta = Objects.requireNonNull(this.item.getItemMeta(), "ItemMeta null for " + this.item.getType());
-        return this;
     }
 
     public @NotNull ItemBuilder amount(int amount) {

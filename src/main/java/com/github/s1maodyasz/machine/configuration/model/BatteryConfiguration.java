@@ -1,5 +1,6 @@
-package com.github.s1maodyasz.machine.model;
+package com.github.s1maodyasz.machine.configuration.model;
 
+import com.github.s1maodyasz.machine.model.ItemConfigurable;
 import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import java.util.Map;
 import lombok.Builder;
@@ -11,25 +12,16 @@ import lombok.experimental.Accessors;
 @Getter
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
-public final class MachineConfiguration implements ItemConfigurable {
+public final class BatteryConfiguration implements ItemConfigurable {
 
     @NonNull
     private String key;
 
     @NonNull
-    private String name;
-
-    @Builder.Default
-    private double drop = 0;
-
-    @NonNull
     private ItemConfiguration item;
 
-    @NonNull
-    private String model;
+    private double amount;
 
-    /** Modifier for individual level */
-    @NonNull
     @Singular
-    private Map<UpgradeEnum, MachineUpgradeConfiguration> upgrades;
+    private final Map<UpgradeEnum, Double> modifiers;
 }

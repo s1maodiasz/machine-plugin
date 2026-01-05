@@ -55,4 +55,9 @@ public class Machine {
                 .reduce(Double::sum)
                 .orElse(0D);
     }
+
+    @BsonIgnore
+    public BatterySlot primarySlot() {
+        return batteries.getFirst();
+    }
 }

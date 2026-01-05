@@ -5,10 +5,12 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class MaterialsUtil {
+public final class MaterialUtil {
 
     public static Material valueOf(String name) {
         final var material = Material.matchMaterial(name);
-        return material == null ? Material.STONE : material;
+        if (material == null)
+            throw new IllegalStateException("Minecraft material called " + name + " not exists");
+        return material;
     }
 }

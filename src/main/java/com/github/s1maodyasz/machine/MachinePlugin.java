@@ -7,16 +7,15 @@ import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.configuration.adapter.BatteryConfigurationSectionAdapter;
 import com.github.s1maodyasz.machine.configuration.adapter.MachineConfigurationSectionAdapter;
 import com.github.s1maodyasz.machine.database.MachineDatabase;
-import com.github.s1maodyasz.machine.engine.MachineBatteriesConsumptionProcessors;
-import com.github.s1maodyasz.machine.engine.MachineSnapshotUpdater;
-import com.github.s1maodyasz.machine.issuer.*;
+import com.github.s1maodyasz.machine.service.refresher.MachineBatteriesConsumptionProcessors;
+import com.github.s1maodyasz.machine.service.refresher.MachineRefresher;
 import com.github.s1maodyasz.machine.listener.InventoryClickListener;
 import com.github.s1maodyasz.machine.listener.MachineInteractionListener;
 import com.github.s1maodyasz.machine.listener.MachinePlaceListener;
-import com.github.s1maodyasz.machine.model.BatteryConfiguration;
-import com.github.s1maodyasz.machine.model.BatteryData;
-import com.github.s1maodyasz.machine.model.MachineConfiguration;
-import com.github.s1maodyasz.machine.model.MachineData;
+import com.github.s1maodyasz.machine.configuration.model.BatteryConfiguration;
+import com.github.s1maodyasz.machine.model.BatterySerializeData;
+import com.github.s1maodyasz.machine.configuration.model.MachineConfiguration;
+import com.github.s1maodyasz.machine.model.MachineSerializeData;
 import com.github.s1maodyasz.machine.provider.*;
 import com.google.gson.GsonBuilder;
 import java.util.Objects;
@@ -34,11 +33,11 @@ public final class MachinePlugin extends JavaPlugin {
     private MachineDatabase database;
     private ConfigurationManager<MachineConfiguration> machineConfiguration;
     private ConfigurationManager<BatteryConfiguration> batteryConfiguration;
-    private MachineSnapshotUpdater snapshotUpdater;
+    private MachineRefresher snapshotUpdater;
     private CustomItemProvider customItemProvider;
     private CustomEntityProvider customEntityProvider;
-    private ItemIssuer<MachineConfiguration, MachineData> machineIssuer;
-    private ItemIssuer<BatteryConfiguration, BatteryData> batteryIssuer;
+    private AbstractItemIssuer<MachineConfiguration, MachineSerializeData> machineIssuer;
+    private AbstractItemIssuer<BatteryConfiguration, BatterySerializeData> batteryIssuer;
 
     @Override
     public void onLoad() {
@@ -68,7 +67,7 @@ public final class MachinePlugin extends JavaPlugin {
             batteryConfiguration.register(battery.key(), battery);
         }
 
-        snapshotUpdater = new MachineSnapshotUpdater(database, new MachineBatteriesConsumptionProcessors());
+        snapshotUpdater = new MachineRefresher(database, new MachineBatteriesConsumptionProcessors());
 
         var gson = new GsonBuilder().disableHtmlEscaping().create();
         var machineNamespacedKey = new NamespacedKey(instance, "machine_data");
@@ -91,11 +90,11 @@ public final class MachinePlugin extends JavaPlugin {
         }
 
         final var machinePlaceholderResolver = new MachinePlaceholderResolver();
-        machineIssuer = new MachineIssuer(
+        machineIssuer = new MachineIssuerAbstract(
                 gson, machineNamespacedKey, customItemProvider, machineConfiguration, machinePlaceholderResolver);
 
         final var batteryPlaceholderResolver = new BatteryPlaceholderResolver();
-        batteryIssuer = new BatteryIssuer(
+        batteryIssuer = new BatteryIssuerAbstract(
                 gson, batteryNamespacedKey, customItemProvider, batteryConfiguration, batteryPlaceholderResolver);
 
         var commandManager = new PaperCommandManager(instance);

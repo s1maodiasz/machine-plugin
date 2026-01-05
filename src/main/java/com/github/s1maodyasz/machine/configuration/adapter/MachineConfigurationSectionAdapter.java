@@ -1,7 +1,7 @@
 package com.github.s1maodyasz.machine.configuration.adapter;
 
-import com.github.s1maodyasz.machine.model.MachineConfiguration;
-import com.github.s1maodyasz.machine.model.MachineUpgradeConfiguration;
+import com.github.s1maodyasz.machine.configuration.model.MachineConfiguration;
+import com.github.s1maodyasz.machine.configuration.model.MachineUpgradeConfiguration;
 import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import java.util.EnumMap;
 import java.util.Map;

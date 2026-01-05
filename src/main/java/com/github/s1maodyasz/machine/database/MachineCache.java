@@ -26,7 +26,7 @@ public final class MachineCache {
     private final long expireAfterAccessSeconds;
 
     private final Cache<UUID, Machine> byId;
-    private final Cache<UUID, Cache<Long, UUID>> idByWorldAndPacked;
+    private final Cache<UUID, Cache<Long, UUID>> byWorld;
 
     public MachineCache(@NonNull Plugin plugin) {
         var config = plugin.getConfig();
@@ -38,7 +38,7 @@ public final class MachineCache {
                 .expireAfterAccess(expireAfterAccessSeconds, TimeUnit.SECONDS)
                 .build();
 
-        this.idByWorldAndPacked = Caffeine.newBuilder()
+        this.byWorld = Caffeine.newBuilder()
                 .maximumSize(64)
                 .expireAfterAccess(expireAfterAccessSeconds, TimeUnit.SECONDS)
                 .build();
@@ -112,7 +112,7 @@ public final class MachineCache {
     }
 
     private Cache<Long, UUID> worldCache(UUID worldId) {
-        Cache<Long, UUID> cache = idByWorldAndPacked.getIfPresent(worldId);
+        Cache<Long, UUID> cache = byWorld.getIfPresent(worldId);
         if (cache != null) return cache;
 
         Cache<Long, UUID> created = Caffeine.newBuilder()
@@ -120,7 +120,7 @@ public final class MachineCache {
                 .expireAfterAccess(expireAfterAccessSeconds, TimeUnit.SECONDS)
                 .build();
 
-        idByWorldAndPacked.put(worldId, created);
+        byWorld.put(worldId, created);
         return created;
     }
 

@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.model;
+package com.github.s1maodyasz.machine.configuration.model;
 
 import java.util.Collections;
 import java.util.List;

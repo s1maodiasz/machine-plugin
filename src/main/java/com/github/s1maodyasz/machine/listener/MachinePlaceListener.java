@@ -1,18 +1,16 @@
 package com.github.s1maodyasz.machine.listener;
 
 import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
+import com.github.s1maodyasz.machine.configuration.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.database.MachineDatabase;
 import com.github.s1maodyasz.machine.message.MessageConstants;
 import com.github.s1maodyasz.machine.model.*;
-import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import com.github.s1maodyasz.machine.provider.CustomEntityProvider;
-import com.github.s1maodyasz.machine.provider.MiniMessageProvider;
 import com.github.s1maodyasz.machine.util.ItemDataUtil;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -62,7 +60,7 @@ public final class MachinePlaceListener implements Listener {
 
         if (encoded == null || encoded.isBlank()) return;
 
-        final MachineData data = gson.fromJson(encoded, MachineData.class);
+        final MachineSerializeData data = gson.fromJson(encoded, MachineSerializeData.class);
         if (data == null) return;
 
         final var configuration = configurationManager.get(data.key());

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class NumberParseUtil {
+public final class NumberUtil {
 
     public static Integer requireNotZero(String value, String message) {
         try {

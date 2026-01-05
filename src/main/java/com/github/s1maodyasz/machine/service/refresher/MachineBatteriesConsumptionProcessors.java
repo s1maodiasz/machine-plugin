@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.engine;
+package com.github.s1maodyasz.machine.service.refresher;
 
 import com.github.s1maodyasz.machine.model.Machine;
 import com.github.s1maodyasz.machine.model.enums.ConsumptionMode;
@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 public final class MachineBatteriesConsumptionProcessors {
 
     private final MachineBatteriesConsumptionProcessor ordered = new MachineBatteriesConsumptionProcessor.Ordered();
-
     private final MachineBatteriesConsumptionProcessor split = new MachineBatteriesConsumptionProcessor.Split();
 
     public @NotNull Machine process(@NotNull ConsumptionMode mode, @NotNull Machine machine, double cost) {

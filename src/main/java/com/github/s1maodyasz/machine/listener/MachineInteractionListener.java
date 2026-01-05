@@ -2,17 +2,15 @@ package com.github.s1maodyasz.machine.listener;
 
 import com.github.s1maodyasz.machine.configuration.ConfigurationManager;
 import com.github.s1maodyasz.machine.database.MachineDatabase;
-import com.github.s1maodyasz.machine.engine.MachineSnapshotUpdater;
-import com.github.s1maodyasz.machine.model.MachineConfiguration;
+import com.github.s1maodyasz.machine.service.refresher.MachineRefresher;
+import com.github.s1maodyasz.machine.configuration.model.MachineConfiguration;
 import com.github.s1maodyasz.machine.model.MachineLocation;
-import com.github.s1maodyasz.machine.panel.MainMachinePanel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -25,7 +23,7 @@ public final class MachineInteractionListener implements Listener {
     private final NamespacedKey namespacedKey;
     private final MachineDatabase database;
     private final ConfigurationManager<MachineConfiguration> machineConfiguration;
-    private final MachineSnapshotUpdater updater;
+    private final MachineRefresher updater;
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInteract(@NotNull PlayerInteractEntityEvent event) {

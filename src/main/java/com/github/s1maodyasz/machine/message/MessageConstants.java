@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MessageConstants {
+
     public static final String UNAUTHORIZED =
         MachinePlugin.getInstance().getConfig().getString("messages.unauthorized", "");
     public static final String ISSUE_SUCCESS =
@@ -50,4 +51,5 @@ public final class MessageConstants {
         MachinePlugin.getInstance().getConfig().getString("messages.collect.empty", "");
     public static final String COLLECT_SUCCESS =
         MachinePlugin.getInstance().getConfig().getString("messages.collect.success", "");
+
 }

@@ -62,7 +62,6 @@ public final class MachineDatabase {
         final String databaseName = database.getString("databaseName", "machine_database");
         final String collectionName = database.getString("collectionName", "machine");
 
-        // IMPORTANT: apply codec registry to the database/collection
         final var db = client.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
         final var collection = db.getCollection(collectionName, Machine.class);
 
@@ -90,8 +89,8 @@ public final class MachineDatabase {
         return withTimeout(CompletableFuture.supplyAsync(() -> findSync(id), executor))
             .whenComplete((r, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo findAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> Optional.empty());
@@ -109,8 +108,8 @@ public final class MachineDatabase {
         return withTimeout(CompletableFuture.supplyAsync(() -> localizeSync(location), executor))
             .whenComplete((r, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo localizeAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> Optional.empty());
@@ -125,8 +124,8 @@ public final class MachineDatabase {
         return withTimeout(CompletableFuture.runAsync(() -> saveSync(machine), executor))
             .whenComplete((v, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo saveAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> null);
@@ -141,8 +140,8 @@ public final class MachineDatabase {
         return withTimeout(CompletableFuture.runAsync(() -> removeSync(machine), executor))
             .whenComplete((v, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo removeAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> null);
@@ -156,8 +155,8 @@ public final class MachineDatabase {
         }, executor))
             .whenComplete((v, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo saveAllAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> null);
@@ -171,8 +170,8 @@ public final class MachineDatabase {
         return withTimeout(CompletableFuture.supplyAsync(() -> nearbySync(center, radius), executor))
             .whenComplete((r, ex) -> {
                 if (ex != null) {
-                    plugin.getLogger().severe("Mongo nearbyAsync failed: " + ex.getMessage());
-                    ex.printStackTrace();
+                    final var message = ex.getMessage();
+                    plugin.getLogger().severe(message);
                 }
             })
             .exceptionally(ex -> List.of());

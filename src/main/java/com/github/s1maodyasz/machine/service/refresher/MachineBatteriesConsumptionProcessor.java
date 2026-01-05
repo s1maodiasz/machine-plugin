@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.engine;
+package com.github.s1maodyasz.machine.service.refresher;
 
 import com.github.s1maodyasz.machine.model.BatterySlot;
 import com.github.s1maodyasz.machine.model.Machine;

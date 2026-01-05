@@ -1,4 +1,4 @@
-package com.github.s1maodyasz.machine.model;
+package com.github.s1maodyasz.machine.configuration.model;
 
 import java.util.Map;
 import lombok.Builder;
@@ -14,5 +14,10 @@ public final class MachineUpgradeConfiguration {
 
     @NonNull
     @Singular
-    private Map<Integer, Double> levels;
+    private Map<Integer, Level> levels;
+
+    @Builder(toBuilder = true)
+    @Accessors(fluent = true)
+    public record Level(double value, double price) { }
+
 }

@@ -13,6 +13,7 @@ public final class InventoryClickListener implements Listener {
         final var inventory = event.getInventory();
 
         final var holder = inventory.getHolder();
-        if (holder instanceof Panel panel) panel.handleClick(event);
+        if (holder instanceof Panel panel)
+            panel.handleClick(event);
     }
 }

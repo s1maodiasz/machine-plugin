@@ -7,12 +7,9 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.Description;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.annotation.Syntax;
-import com.github.s1maodyasz.machine.issuer.IssueResult;
-import com.github.s1maodyasz.machine.issuer.ItemIssuer;
 import com.github.s1maodyasz.machine.message.MessageConstants;
-import com.github.s1maodyasz.machine.model.BatteryConfiguration;
-import com.github.s1maodyasz.machine.model.BatteryData;
-import com.github.s1maodyasz.machine.provider.MiniMessageProvider;
+import com.github.s1maodyasz.machine.configuration.model.BatteryConfiguration;
+import com.github.s1maodyasz.machine.model.BatterySerializeData;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -28,7 +25,7 @@ public final class BatteryCommand extends BaseCommand {
     private static final String ADMIN_PERMISSION = "machine.admin";
 
     private final Plugin plugin;
-    private final ItemIssuer<BatteryConfiguration, BatteryData> itemIssuer;
+    private final AbstractItemIssuer<BatteryConfiguration, BatterySerializeData> abstractItemIssuer;
 
     @Default
     public void onDefault(CommandSender sender) {
@@ -58,8 +55,8 @@ public final class BatteryCommand extends BaseCommand {
         }
         final Player target = Bukkit.getPlayerExact(playerName);
         if (target == null) return;
-        final var data = BatteryData.builder().key(key).build();
-        final IssueResult result = itemIssuer.issue(target, data, amount);
+        final var data = BatterySerializeData.builder().key(key).build();
+        final IssueResult result = abstractItemIssuer.issue(target, data, amount);
         final String path =
                 switch (result) {
                     case SUCCESS -> MessageConstants.ISSUE_SUCCESS;

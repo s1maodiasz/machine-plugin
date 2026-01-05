@@ -1,6 +1,6 @@
 package com.github.s1maodyasz.machine.configuration.adapter;
 
-import com.github.s1maodyasz.machine.model.BatteryConfiguration;
+import com.github.s1maodyasz.machine.configuration.model.BatteryConfiguration;
 import com.github.s1maodyasz.machine.model.enums.UpgradeEnum;
 import java.util.EnumMap;
 import java.util.Objects;
