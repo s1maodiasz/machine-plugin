@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ItemBuilder {
 
-    public static final ItemStack NONE = ItemBuilder.of(Material.STONE).build();
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
 
     private ItemStack item;
     private ItemMeta meta;
@@ -80,7 +81,7 @@ public final class ItemBuilder {
     }
 
     public @NotNull ItemBuilder name(@Nullable String miniMsg) {
-        meta().displayName(miniMsg == null ? null : MiniMessageProvider.MM.deserialize(miniMsg));
+        meta().displayName(miniMsg == null ? null : MINI_MESSAGE.deserialize(miniMsg));
         return this;
     }
 
@@ -95,7 +96,6 @@ public final class ItemBuilder {
             return this;
         }
 
-        // cópia defensiva (e garante mutável caso algum meta/impl mexa)
         meta().lore(new ArrayList<>(lines));
         return this;
     }
@@ -108,7 +108,7 @@ public final class ItemBuilder {
 
         final List<Component> lore = new ArrayList<>(lines.length);
         for (String line : lines) {
-            lore.add(line == null ? Component.empty() : MiniMessageProvider.MM.deserialize(line));
+            lore.add(line == null ? Component.empty() : MINI_MESSAGE.deserialize(line));
         }
         return lore(lore);
     }
